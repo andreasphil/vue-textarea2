@@ -43,7 +43,7 @@ const text = ref("Hello world!");
 
 The textarea exposes a `withContext` method which you can use for interacting with it. It gives you access to the current `EditingContext`, which includes, for example, methods for focusing and adjusting the selection, current selection, etc.:
 
-```
+```vue
 <script setup lang="ts">
 import VueTextarea2 from "@andreasphil/vue-textarea2";
 
