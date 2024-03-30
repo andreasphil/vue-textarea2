@@ -1,6 +1,6 @@
 {
   "name": "@andreasphil/vue-textarea2",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "A better plain-text input component for Vue",
   "author": "Andreas Philippi",
   "license": "MIT",
