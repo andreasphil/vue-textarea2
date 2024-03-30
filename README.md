@@ -6,18 +6,12 @@
   <strong>A better plain-text input component for Vue</strong>
 </p>
 
-<p align="center">
-<a href="https://app.netlify.com/sites/andreasphil-tasks/deploys">
-   <img src="https://api.netlify.com/api/v1/badges/508e3f7f-df54-4326-bb55-4b4cae9a7dd2/deploy-status" alt="Netlify Status" />
-</a>
-</p>
-
 > ⚠️ Work in progress. Things are most certainly incomplete and/or broken, and will definitely change.
 
 - 😌 Helpful, unobstrusive UX improvements like tabs and continuing lists
 - 🌱 Extensible to support custom syntax highlighting, interactions, and more
 - 👌 Fully typed and tested
-- 🛝 Check out the [examples and docs](https://textarea2.a13i.dev>)
+- 🛝 Check out Tasks for a [demo](https://tasks.a13i.dev) and [example usage](https://github.com/andreasphil/tasks)
 
 ## Installation
 
@@ -86,10 +80,6 @@ pnpm run dev       # Start development server
 pnpm run build     # Create a production bundle
 pnpm run test      # Run tests
 ```
-
-## Deployment
-
-Deployment should work out of the box when linking the repository to a project on [Netlify](https://netlify.com).
 
 ## Credits
 
