@@ -1,0 +1,41 @@
+{
+  "name": "@andreasphil/vue-textarea2",
+  "version": "0.0.0",
+  "description": "A better plain-text input component for Vue",
+  "author": "Andreas Philippi",
+  "license": "MIT",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/Textarea2.js",
+      "types": "./dist/components/Textarea2.vue.d.ts"
+    },
+    "./text": {
+      "import": "./dist/text.js",
+      "types": "./dist/lib/text.d.ts"
+    },
+    "./style.css": {
+      "import": "./dist/style.css"
+    }
+  },
+  "scripts": {
+    "dev": "vite",
+    "test": "vitest",
+    "build": "vue-tsc && vite build && vue-tsc -p tsconfig.lib.json",
+    "preversion": "pnpm test -- run && pnpm build; git add dist/"
+  },
+  "dependencies": {
+    "vue": "^3.4.21"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.0.4",
+    "jsdom": "^24.0.0",
+    "typescript": "^5.2.2",
+    "vite": "^5.2.0",
+    "vitest": "^1.4.0",
+    "vue-tsc": "^2.0.6"
+  }
+}
