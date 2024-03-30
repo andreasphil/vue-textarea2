@@ -159,13 +159,6 @@ export type ContinueListResult = {
     }
 );
 
-export type MergeListResult = {
-  /** Updated input line */
-  current: string;
-  /** List marker as returned by the matching rule */
-  match: string;
-};
-
 /** Default rules for list continuation. */
 export const continueListRules: Record<string, ContinueListRule> = {
   unordered: { pattern: /^\t*[-*] /, next: "same" },
@@ -226,6 +219,24 @@ export function continueList(
   }
 }
 
+export type MergeListResult = {
+  /** Updated input line */
+  current: string;
+  /** List marker as returned by the matching rule */
+  match: string;
+};
+
+/**
+ * Given some already existing line, a string of text that should be inserted
+ * in that line, and a list of rules for continuing lists, this function checks
+ * if: 1) the existing line is a list; and 2) the new text is also a list. If
+ * both are true, both will be consolidated in order to avoid duplicate list
+ * markers.
+ *
+ * @param line Existing line
+ * @param insert Newly inserted content
+ * @param rules The rules to check against
+ */
 export function mergeList(
   line: string,
   insert: string,
@@ -271,6 +282,12 @@ export function indent(lines: string[], mode: IndentMode = "indent"): string[] {
  * Flipping lines                                     *
  * -------------------------------------------------- */
 
+/**
+ * Changes the order of two lines of text.
+ *
+ * @param a First line
+ * @param b Second line
+ */
 export function flip(a: string, b: string): [string, string] {
   return [b, a];
 }
