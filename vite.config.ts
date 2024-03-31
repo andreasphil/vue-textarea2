@@ -10,12 +10,9 @@ export default defineConfig({
   build: {
     lib: {
       entry: [
-        fileURLToPath(
-          new URL("./src/components/Textarea2.vue", import.meta.url)
-        ),
+        fileURLToPath(new URL("./src/components/Textarea2.vue", import.meta.url)),
         fileURLToPath(new URL("./src/lib/text.ts", import.meta.url)),
       ],
-      name: "Textarea2",
       formats: ["es"],
     },
     rollupOptions: {

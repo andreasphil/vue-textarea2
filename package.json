@@ -5,6 +5,7 @@
   "author": "Andreas Philippi",
   "license": "MIT",
   "type": "module",
+  "repository": "https://github.com/andreasphil/vue-textarea2",
   "files": [
     "dist"
   ],
@@ -23,9 +24,9 @@
   },
   "scripts": {
     "dev": "vite",
-    "test": "vitest",
-    "build": "vue-tsc && vite build && vue-tsc -p tsconfig.lib.json",
-    "preversion": "pnpm test -- run && pnpm build; git add dist/"
+    "test": "vitest run",
+    "build": "vite build; vue-tsc -p tsconfig.lib.json",
+    "preversion": "pnpm test && pnpm build; git add dist/"
   },
   "dependencies": {
     "vue": "^3.4.21"

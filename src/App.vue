@@ -28,41 +28,57 @@ onMounted(() => {
 </script>
 
 <template>
-  <h1>Textarea2 Demo</h1>
-  <nav>
-    <ul>
-      <li>
-        <a href="#simple">Simple</a>
-      </li>
-      <li>
-        <a href="#custom-styling">Custom styling</a>
-      </li>
-      <li>
-        <a href="#syntax-highlighting">Syntax highlighting</a>
-      </li>
-      <li>
-        <a href="#readonly">Readonly</a>
-      </li>
-    </ul>
-  </nav>
-
-  <SimpleDemo v-if="route === '#simple'" />
-  <CustomStylingDemo v-else-if="route === '#custom-styling'" />
-  <SyntaxHighlightingDemo v-else-if="route === '#syntax-highlighting'" />
-  <ReadonlyDemo v-else-if="route === '#readonly'" />
+  <main>
+    <h1>Textarea2 Demo</h1>
+    <nav>
+      <ul>
+        <li>
+          <a href="#simple">Simple</a>
+        </li>
+        <li>
+          <a href="#custom-styling">Custom styling</a>
+        </li>
+        <li>
+          <a href="#syntax-highlighting">Syntax highlighting</a>
+        </li>
+        <li>
+          <a href="#readonly">Readonly</a>
+        </li>
+      </ul>
+    </nav>
+    <SimpleDemo v-if="route === '#simple'" />
+    <CustomStylingDemo v-else-if="route === '#custom-styling'" />
+    <SyntaxHighlightingDemo v-else-if="route === '#syntax-highlighting'" />
+    <ReadonlyDemo v-else-if="route === '#readonly'" />
+  </main>
 </template>
 
 <style>
 body {
-  margin: auto;
-  max-width: 50rem;
-  font-family: ui-sans, system-ui, sans-serif;
-  line-height: 1.5em;
-  padding: 6rem 1rem;
+  margin: 0;
 }
 
-h1 {
-  margin-top: 0;
+main {
+  font-family: ui-sans, sans-serif;
+  font-size: 1.05em;
+  line-height: 1.5em;
+  margin: auto;
+  max-width: 70ch;
+  padding: 4rem 1rem;
+  > :first-child { margin-top: 0; }
+  > :last-child { margin-bottom: 0; }
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 2em 0 1rem;
+}
+
+article, blockquote, header, footer, ol, ul, hr, p, pre {
+  margin: 1.5em 0;
+}
+
+*, ::before, ::after {
+  box-sizing: border-box;
 }
 
 nav ul {
@@ -70,6 +86,5 @@ nav ul {
   gap: 1rem;
   list-style: none;
   padding: 0;
-  margin-bottom: 3rem;
 }
 </style>

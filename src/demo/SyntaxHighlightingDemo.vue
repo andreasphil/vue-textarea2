@@ -38,11 +38,11 @@ function contextProvider(row: string): HighlightedRow {
         textarea changes:
       </p>
       <pre>
-        function contextProvider(row: string) {
-          if (row.startsWith("#")) return { color: "black" };
-          else if (row.startsWith(">")) return { color: "blue" };
-          else return { color: "gray" };
-        }</pre
+  function contextProvider(row: string) {
+    if (row.startsWith("#")) return { color: "black" };
+    else if (row.startsWith(">")) return { color: "blue" };
+    else return { color: "gray" };
+  }</pre
       >
       <p>
         The textarea will call the provider for each row individually. The
@@ -50,13 +50,13 @@ function contextProvider(row: string): HighlightedRow {
         component. You can use this to customize what the output will look like:
       </p>
       <pre>
-        &lt;Textarea2 v-model="text" :context-provider="contextProvider"&gt;
-          &lt;template #row="{ context, row }"&gt;
-            &lt;div :style="{ color: context.color }"&gt;
-              &#123;&#123; row &#125;&#125;
-            &lt;/div&gt;
-          &lt;/template&gt;
-        &lt;/Textarea2&gt;</pre
+  &lt;Textarea2 v-model="text" :context-provider="contextProvider"&gt;
+    &lt;template #row="{ context, row }"&gt;
+      &lt;div :style="{ color: context.color }"&gt;
+        &#123;&#123; row &#125;&#125;
+      &lt;/div&gt;
+    &lt;/template&gt;
+  &lt;/Textarea2&gt;</pre
       >
       <p>
         This can get you some cool results with very little effort, but also has
