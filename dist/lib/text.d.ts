@@ -73,12 +73,6 @@ export type ContinueListResult = {
     /** Since no rule has matched, no list has ended either */
     didEnd: false;
 });
-export type MergeListResult = {
-    /** Updated input line */
-    current: string;
-    /** List marker as returned by the matching rule */
-    match: string;
-};
 /** Default rules for list continuation. */
 export declare const continueListRules: Record<string, ContinueListRule>;
 /**
@@ -92,6 +86,23 @@ export declare const continueListRules: Record<string, ContinueListRule>;
  * @param cursor The cursor position to split the line at, defaults to end of line
  */
 export declare function continueList(line: string, rules: ContinueListRule[], cursor?: number): ContinueListResult;
+export type MergeListResult = {
+    /** Updated input line */
+    current: string;
+    /** List marker as returned by the matching rule */
+    match: string;
+};
+/**
+ * Given some already existing line, a string of text that should be inserted
+ * in that line, and a list of rules for continuing lists, this function checks
+ * if: 1) the existing line is a list; and 2) the new text is also a list. If
+ * both are true, both will be consolidated in order to avoid duplicate list
+ * markers.
+ *
+ * @param line Existing line
+ * @param insert Newly inserted content
+ * @param rules The rules to check against
+ */
 export declare function mergeList(line: string, insert: string, rules: ContinueListRule[]): MergeListResult | null;
 export type IndentMode = "indent" | "outdent";
 /**
@@ -101,4 +112,10 @@ export type IndentMode = "indent" | "outdent";
  * @param [mode="indent"] Whether to indent or outdent
  */
 export declare function indent(lines: string[], mode?: IndentMode): string[];
+/**
+ * Changes the order of two lines of text.
+ *
+ * @param a First line
+ * @param b Second line
+ */
 export declare function flip(a: string, b: string): [string, string];
