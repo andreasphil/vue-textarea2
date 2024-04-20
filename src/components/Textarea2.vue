@@ -246,9 +246,9 @@ function onFlip(direction: "up" | "down"): void {
 function onCut(event: KeyboardEvent): void {
   const newRows = [...rows.value];
 
-  withContext(async ({ selectedLines, adjustSelection }) => {
-    const [lineNr, endLineNr] = selectedLines;
-    if (lineNr !== endLineNr) return;
+  withContext(async (ctx) => {
+    const [lineNr, endLineNr] = ctx.selectedLines;
+    if (lineNr !== endLineNr || ctx.selectionStart !== ctx.selectionEnd) return;
 
     event.preventDefault();
 
@@ -257,7 +257,7 @@ function onCut(event: KeyboardEvent): void {
     setLocalModelValue(text.joinLines(newRows));
 
     const newLinNr = Math.min(lineNr, newRows.length - 1);
-    adjustSelection({ to: "startOfLine", startOf: newLinNr });
+    ctx.adjustSelection({ to: "startOfLine", startOf: newLinNr });
   });
 }
 
