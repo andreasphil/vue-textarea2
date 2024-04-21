@@ -436,7 +436,7 @@ export type EditingContext = {
       @input="onInput"
       @keydown.alt.down.prevent="allowFlipLines ? onFlip('down') : undefined"
       @keydown.alt.up.prevent="allowFlipLines ? onFlip('up') : undefined"
-      @keydown.enter.prevent="continueLists ? onContinueList() : undefined"
+      @keydown.enter.prevent="onContinueList()"
       @keydown.meta.shift.d="duplicateLine ? onDuplicate($event) : undefined"
       @keydown.meta.shift.k="deleteLine ? onDelete($event) : undefined"
       @keydown.meta.x="cutFullLine ? onCut($event) : undefined"
@@ -444,7 +444,7 @@ export type EditingContext = {
       @paste="mergeListsOnPaste ? onPaste($event) : undefined"
       ref="textareaEl"
     />
-    <div :class="$style.output">
+    <div :class="$style.output" data-testid="output">
       <div
         v-for="({ row, key, context }, i) in rowsWithContext"
         :class="$style.row"
