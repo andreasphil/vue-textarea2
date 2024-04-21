@@ -29,10 +29,16 @@ const props = withDefaults(
     continueLists?: false | text.ContinueListRule[];
 
     /**
-     * When true, pressing ctrl + x without a selection will cut the entire
+     * When true, pressing cmd + x without a selection will cut the entire
      * line.
      */
     cutFullLine?: boolean;
+
+    /**
+     * When true, pressing cmd + shift + d without a selection will duplicate
+     * the entire line.
+     */
+    duplicateLine?: boolean;
 
     /**
      * When true, pressing tab or shift + tab will indent or outdent the line.
@@ -77,6 +83,7 @@ const props = withDefaults(
     contextProvider: (_: string) => ({} as RowContext),
     continueLists: () => Object.values(text.continueListRules),
     cutFullLine: true,
+    duplicateLine: true,
     insertTabs: true,
     mergeListsOnPaste: true,
     readonly: false,
@@ -257,7 +264,28 @@ function onCut(event: KeyboardEvent): void {
     setLocalModelValue(text.joinLines(newRows));
 
     const newLinNr = Math.min(lineNr, newRows.length - 1);
-    ctx.adjustSelection({ to: "startOfLine", startOf: newLinNr });
+    ctx.adjustSelection({ to: "endOfLine", endOf: newLinNr });
+  });
+}
+
+function onDuplicate(event: KeyboardEvent): void {
+  let newRows = [...rows.value];
+
+  withContext(async (ctx) => {
+    const [lineNr, endLineNr] = ctx.selectedLines;
+    if (lineNr !== endLineNr || ctx.selectionStart !== ctx.selectionEnd) return;
+
+    event.preventDefault();
+
+    newRows = [
+      ...newRows.slice(0, lineNr),
+      newRows[lineNr],
+      ...newRows.slice(lineNr),
+    ];
+
+    setLocalModelValue(text.joinLines(newRows));
+
+    ctx.adjustSelection({ to: "endOfLine", endOf: lineNr + 1 });
   });
 }
 
@@ -396,6 +424,7 @@ export type EditingContext = {
       @keydown.alt.down.prevent="allowFlipLines ? onFlip('down') : undefined"
       @keydown.alt.up.prevent="allowFlipLines ? onFlip('up') : undefined"
       @keydown.enter.prevent="continueLists ? onContinueList() : undefined"
+      @keydown.meta.shift.d="duplicateLine ? onDuplicate($event) : undefined"
       @keydown.meta.x="cutFullLine ? onCut($event) : undefined"
       @keydown.tab.prevent="insertTabs ? onInsertTab($event) : undefined"
       @paste="mergeListsOnPaste ? onPaste($event) : undefined"
