@@ -35,6 +35,12 @@ const props = withDefaults(
     cutFullLine?: boolean;
 
     /**
+     * When true, pressing cmd + shift + k without a selection will delete the
+     * entire line.
+     */
+    deleteLine?: boolean;
+
+    /**
      * When true, pressing cmd + shift + d without a selection will duplicate
      * the entire line.
      */
@@ -83,6 +89,7 @@ const props = withDefaults(
     contextProvider: (_: string) => ({} as RowContext),
     continueLists: () => Object.values(text.continueListRules),
     cutFullLine: true,
+    deleteLine: true,
     duplicateLine: true,
     insertTabs: true,
     mergeListsOnPaste: true,
@@ -289,6 +296,23 @@ function onDuplicate(event: KeyboardEvent): void {
   });
 }
 
+function onDelete(event: KeyboardEvent): void {
+  const newRows = [...rows.value];
+
+  withContext(async (ctx) => {
+    const [lineNr, endLineNr] = ctx.selectedLines;
+    if (lineNr !== endLineNr || ctx.selectionStart !== ctx.selectionEnd) return;
+
+    event.preventDefault();
+
+    newRows.splice(lineNr, 1);
+    setLocalModelValue(text.joinLines(newRows));
+
+    const newLinNr = Math.min(lineNr, newRows.length - 1);
+    ctx.adjustSelection({ to: "endOfLine", endOf: newLinNr });
+  });
+}
+
 function onPaste(event: ClipboardEvent): void {
   const payload = event.clipboardData?.getData("text/plain");
   const newRows = [...rows.value];
@@ -425,6 +449,7 @@ export type EditingContext = {
       @keydown.alt.up.prevent="allowFlipLines ? onFlip('up') : undefined"
       @keydown.enter.prevent="continueLists ? onContinueList() : undefined"
       @keydown.meta.shift.d="duplicateLine ? onDuplicate($event) : undefined"
+      @keydown.meta.shift.k="deleteLine ? onDelete($event) : undefined"
       @keydown.meta.x="cutFullLine ? onCut($event) : undefined"
       @keydown.tab.prevent="insertTabs ? onInsertTab($event) : undefined"
       @paste="mergeListsOnPaste ? onPaste($event) : undefined"
