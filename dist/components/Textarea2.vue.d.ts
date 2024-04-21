@@ -31,6 +31,8 @@ declare const _default: <RowContext extends Record<string, any>>(__VLS_props: {
     contextProvider?: ((row: string) => RowContext) | undefined;
     continueLists?: false | text.ContinueListRule[] | undefined;
     cutFullLine?: boolean | undefined;
+    deleteLine?: boolean | undefined;
+    duplicateLine?: boolean | undefined;
     insertTabs?: boolean | undefined;
     mergeListsOnPaste?: boolean | undefined;
     modelValue: string;
@@ -77,6 +79,8 @@ declare const _default: <RowContext extends Record<string, any>>(__VLS_props: {
         contextProvider?: ((row: string) => RowContext) | undefined;
         continueLists?: false | text.ContinueListRule[] | undefined;
         cutFullLine?: boolean | undefined;
+        deleteLine?: boolean | undefined;
+        duplicateLine?: boolean | undefined;
         insertTabs?: boolean | undefined;
         mergeListsOnPaste?: boolean | undefined;
         modelValue: string;
@@ -127,6 +131,8 @@ declare const _default: <RowContext extends Record<string, any>>(__VLS_props: {
             contextProvider?: ((row: string) => RowContext) | undefined;
             continueLists?: false | text.ContinueListRule[] | undefined;
             cutFullLine?: boolean | undefined;
+            deleteLine?: boolean | undefined;
+            duplicateLine?: boolean | undefined;
             insertTabs?: boolean | undefined;
             mergeListsOnPaste?: boolean | undefined;
             modelValue: string;

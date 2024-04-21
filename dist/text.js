@@ -1,4 +1,4 @@
-function h(n) {
+function d(n) {
   return n.split(`
 `);
 }
@@ -9,32 +9,38 @@ function f(n) {
 function g(n, t) {
   return [n.slice(0, t), n.slice(t)];
 }
-function p(n, t, e = t) {
-  const i = Array.isArray(n) ? [...n] : h(n);
-  let r = 0, l = -1, c = -1;
+function p(n, t) {
+  return n.toSpliced(t, 1);
+}
+function o(n, t) {
+  return !n.length || t > n.length ? [...n] : [...n.slice(0, t), n[t], ...n.slice(t)];
+}
+function L(n, t, e = t) {
+  const i = Array.isArray(n) ? [...n] : d(n);
+  let l = 0, r = -1, c = -1;
   e < t && ([t, e] = [e, t]);
-  for (let s = 0; s < i.length && (l < 0 || c < 0); s++) {
-    const a = i[s], u = r, d = u + a.length;
-    t >= u && t <= d && (l = s), e >= u && e <= d && (c = s), r += a.length + 1;
+  for (let s = 0; s < i.length && (r < 0 || c < 0); s++) {
+    const u = i[s], a = l, h = a + u.length;
+    t >= a && t <= h && (r = s), e >= a && e <= h && (c = s), l += u.length + 1;
   }
-  return [Math.max(l, 0), c === -1 ? i.length - 1 : c];
+  return [Math.max(r, 0), c === -1 ? i.length - 1 : c];
 }
-function o(n, t, e = t) {
-  const i = Array.isArray(n) ? [...n] : h(n), r = i.map((s) => s.length);
+function m(n, t, e = t) {
+  const i = Array.isArray(n) ? [...n] : d(n), l = i.map((s) => s.length);
   t = Math.max(t, 0), e = Math.min(e, i.length - 1), e < t && ([t, e] = [e, t]);
-  let l = r.slice(0, t).reduce((s, a) => s + a, 0);
-  l += t;
-  let c = r.slice(t, e + 1).reduce((s, a) => s + a, l);
-  return c += e - t, [l, c];
+  let r = l.slice(0, t).reduce((s, u) => s + u, 0);
+  r += t;
+  let c = l.slice(t, e + 1).reduce((s, u) => s + u, r);
+  return c += e - t, [r, c];
 }
-function L(n, t) {
+function x(n, t) {
   if (t > n.length || t < 0)
     return;
   const i = n.slice(0, t).lastIndexOf(`
 `) + 1;
   return t - i;
 }
-const x = {
+const A = {
   unordered: { pattern: /^\t*[-*] /, next: "same" },
   indent: { pattern: /^\t+/, next: "same" },
   numbered: {
@@ -42,39 +48,41 @@ const x = {
     next: (n) => `${Number.parseInt(n) + 1}. `
   }
 };
-function m(n, t, e = n.length) {
-  let i, r = null, l = null;
-  for (let u = 0; u < t.length && !i; u++)
-    r = n.match(t[u].pattern), r && (i = t[u].next);
+function C(n, t, e = n.length) {
+  let i, l = null, r = null;
+  for (let a = 0; a < t.length && !i; a++)
+    l = n.match(t[a].pattern), l && (i = t[a].next);
   let [c, s] = g(n, e);
-  c && r && i && (l = i === "same" ? r[0] : i(r[0]), s = l + s);
-  const a = c === (r == null ? void 0 : r[0]) && e === n.length;
-  return a && (c = ""), a && l ? { current: c, next: null, didEnd: !0, match: l } : c && l ? { current: c, next: s, didContinue: !0, match: l } : { current: c, next: s, didContinue: !1, didEnd: !1 };
+  c && l && i && (r = i === "same" ? l[0] : i(l[0]), s = r + s);
+  const u = c === (l == null ? void 0 : l[0]) && e === n.length;
+  return u && (c = ""), u && r ? { current: c, next: null, didEnd: !0, match: r } : c && r ? { current: c, next: s, didContinue: !0, match: r } : { current: c, next: s, didContinue: !1, didEnd: !1 };
 }
-function A(n, t, e) {
-  let i = null, r = null;
-  for (let l = 0; l < e.length && !i; l++) {
-    const c = n.match(e[l].pattern);
-    c && n.length === c[0].length && (i = e[l].pattern, r = t.match(i));
+function M(n, t, e) {
+  let i = null, l = null;
+  for (let r = 0; r < e.length && !i; r++) {
+    const c = n.match(e[r].pattern);
+    c && n.length === c[0].length && (i = e[r].pattern, l = t.match(i));
   }
-  return i && r ? { current: n.replace(i, t), match: r[0] } : null;
+  return i && l ? { current: n.replace(i, t), match: l[0] } : null;
 }
-function C(n, t = "indent") {
+function S(n, t = "indent") {
   return t === "indent" ? n.map((e) => `	${e}`) : n.map((e) => e.startsWith("	") ? e.slice(1) : e);
 }
-function M(n, t) {
+function b(n, t) {
   return [t, n];
 }
 export {
-  m as continueList,
-  x as continueListRules,
-  M as flip,
-  L as getCursorInLine,
-  o as getRangeFromSelectedLines,
-  p as getSelectedLines,
-  C as indent,
+  C as continueList,
+  A as continueListRules,
+  p as deleteLine,
+  o as duplicateLine,
+  b as flip,
+  x as getCursorInLine,
+  m as getRangeFromSelectedLines,
+  L as getSelectedLines,
+  S as indent,
   f as joinLines,
-  A as mergeList,
+  M as mergeList,
   g as splitAt,
-  h as splitLines
+  d as splitLines
 };

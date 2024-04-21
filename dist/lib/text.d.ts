@@ -4,6 +4,10 @@ export declare function splitLines(text: string): string[];
 export declare function joinLines(lines: string[]): string;
 /** Splits a string in two at the specified index. */
 export declare function splitAt(text: string, index: number): [string, string];
+/** Deletes the line at the specified index. */
+export declare function deleteLine(value: string[], index: number): string[];
+/** Duplicates the line at the specified index. */
+export declare function duplicateLine(value: string[], index: number): string[];
 /**
  * For a selection beginning at `from` and ending at `to`, returns the line
  * numbers of the first and last selected line.
