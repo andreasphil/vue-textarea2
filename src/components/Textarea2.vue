@@ -258,16 +258,14 @@ function onFlip(direction: "up" | "down"): void {
  * -------------------------------------------------- */
 
 function onCut(event: KeyboardEvent): void {
-  const newRows = [...rows.value];
-
   withContext(async (ctx) => {
     const [lineNr, endLineNr] = ctx.selectedLines;
     if (lineNr !== endLineNr || ctx.selectionStart !== ctx.selectionEnd) return;
 
     event.preventDefault();
 
-    await navigator.clipboard.writeText(newRows[lineNr]);
-    newRows.splice(lineNr, 1);
+    await navigator.clipboard.writeText(rows.value[lineNr]);
+    const newRows = text.deleteLine(rows.value, lineNr);
     setLocalModelValue(text.joinLines(newRows));
 
     const newLinNr = Math.min(lineNr, newRows.length - 1);
@@ -276,20 +274,13 @@ function onCut(event: KeyboardEvent): void {
 }
 
 function onDuplicate(event: KeyboardEvent): void {
-  let newRows = [...rows.value];
-
   withContext(async (ctx) => {
     const [lineNr, endLineNr] = ctx.selectedLines;
     if (lineNr !== endLineNr || ctx.selectionStart !== ctx.selectionEnd) return;
 
     event.preventDefault();
 
-    newRows = [
-      ...newRows.slice(0, lineNr),
-      newRows[lineNr],
-      ...newRows.slice(lineNr),
-    ];
-
+    const newRows = text.duplicateLine(rows.value, lineNr);
     setLocalModelValue(text.joinLines(newRows));
 
     ctx.adjustSelection({ to: "endOfLine", endOf: lineNr + 1 });
@@ -297,15 +288,13 @@ function onDuplicate(event: KeyboardEvent): void {
 }
 
 function onDelete(event: KeyboardEvent): void {
-  const newRows = [...rows.value];
-
   withContext(async (ctx) => {
     const [lineNr, endLineNr] = ctx.selectedLines;
     if (lineNr !== endLineNr || ctx.selectionStart !== ctx.selectionEnd) return;
 
     event.preventDefault();
 
-    newRows.splice(lineNr, 1);
+    const newRows = text.deleteLine(rows.value, lineNr);
     setLocalModelValue(text.joinLines(newRows));
 
     const newLinNr = Math.min(lineNr, newRows.length - 1);

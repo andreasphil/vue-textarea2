@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 import {
   continueList,
   continueListRules,
+  deleteLine,
+  duplicateLine,
   flip,
   getCursorInLine,
   getRangeFromSelectedLines,
@@ -59,6 +61,50 @@ describe("text", () => {
 
     it("splits a string with an index out of bounds", () => {
       expect(splitAt("foobarbaz", 100)).toEqual(["foobarbaz", ""]);
+    });
+  });
+
+  describe("delete line", () => {
+    it("deletes a line in the middle", () => {
+      expect(deleteLine(["1", "2", "3"], 1)).toEqual(["1", "3"]);
+    });
+
+    it("deletes a line at the start", () => {
+      expect(deleteLine(["1", "2", "3"], 0)).toEqual(["2", "3"]);
+    });
+
+    it("deletes a line at the end", () => {
+      expect(deleteLine(["1", "2", "3"], 2)).toEqual(["1", "2"]);
+    });
+
+    it("doesn't crash if the input is empty", () => {
+      expect(deleteLine([], 1)).toEqual([]);
+    });
+
+    it("doesn't crash if the index is out of bounds", () => {
+      expect(deleteLine(["1", "2", "3"], 100)).toEqual(["1", "2", "3"]);
+    });
+  });
+
+  describe("duplicate line", () => {
+    it("duplicates a line in the middle", () => {
+      expect(duplicateLine(["1", "2", "3"], 1)).toEqual(["1", "2", "2", "3"]);
+    });
+
+    it("duplicates a line at the start", () => {
+      expect(duplicateLine(["1", "2", "3"], 0)).toEqual(["1", "1", "2", "3"]);
+    });
+
+    it("duplicates a line at the end", () => {
+      expect(duplicateLine(["1", "2", "3"], 2)).toEqual(["1", "2", "3", "3"]);
+    });
+
+    it("doesn't crash if the input is empty", () => {
+      expect(duplicateLine([], 1)).toEqual([]);
+    });
+
+    it("doesn't crash if the index is out of bounds", () => {
+      expect(duplicateLine(["1", "2", "3"], 100)).toEqual(["1", "2", "3"]);
     });
   });
 

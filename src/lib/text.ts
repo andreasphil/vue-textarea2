@@ -17,6 +17,17 @@ export function splitAt(text: string, index: number): [string, string] {
   return [text.slice(0, index), text.slice(index)];
 }
 
+/** Deletes the line at the specified index. */
+export function deleteLine(value: string[], index: number): string[] {
+  return value.toSpliced(index, 1);
+}
+
+/** Duplicates the line at the specified index. */
+export function duplicateLine(value: string[], index: number): string[] {
+  if (!value.length || index > value.length) return [...value];
+  return [...value.slice(0, index), value[index], ...value.slice(index)];
+}
+
 /* -------------------------------------------------- *
  * Selection and cursor position                      *
  * -------------------------------------------------- */
