@@ -27,8 +27,14 @@ const text = ref("Hello world!");
           Press <kbd>option+arrow up</kbd> or <kbd>option+arrow down</kbd> to
           flip two lines.
         </li>
+        <li>Copy when nothing is selected to copy the entire line.</li>
         <li>
-          Copy or cut when nothing is selected to copy or cut the entire line.
+          Press <kbd>cmd+shift+d</kbd> when nothing is selected to duplicate the
+          entire line.
+        </li>
+        <li>
+          Press <kbd>cmd+shift+k</kbd> when nothing is selected to delete the
+          entire line.
         </li>
       </ul>
     </template>
