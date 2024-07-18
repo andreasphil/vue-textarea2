@@ -6,11 +6,11 @@ defineProps<{
 
 <template>
   <h2>{{ title }}</h2>
-  <slot name="description" />
 
   <article>
     <slot />
   </article>
+  <slot name="description" />
 </template>
 
 <style scoped>

@@ -3,7 +3,7 @@ import userEvent, { type UserEvent } from "@testing-library/user-event";
 import { cleanup, render, screen } from "@testing-library/vue";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { defineComponent, ref } from "vue";
-import Textarea2 from "./Textarea2.vue";
+import Textarea2, { AutoComplete } from "./Textarea2.vue";
 
 describe("Textarea2", () => {
   let user: UserEvent;
@@ -1019,7 +1019,542 @@ describe("Textarea2", () => {
     });
   });
 
-  describe("running in component context", () => {
+  describe("autocomplete", () => {
+    const example: AutoComplete[] = [
+      {
+        trigger: "/",
+        id: "command",
+        commands: [
+          { id: "test1", name: "Test", icon: () => "🤔", value: "test" },
+          { id: "test2", name: "Example", icon: () => "🫣", value: "example" },
+        ],
+      },
+    ];
+
+    test("shows the menu with commands", async () => {
+      const dummy = defineComponent({
+        // @ts-expect-error Generic type seems to be broken
+        components: { Textarea2 },
+        setup() {
+          const modelValue = ref("");
+          const autocomplete = example;
+          return { modelValue, autocomplete };
+        },
+        template: `
+          <Textarea2 v-model="modelValue" :autocomplete />
+        `,
+      });
+
+      render(dummy);
+      await user.type(screen.getByRole("textbox"), "/t");
+
+      expect(screen.getByRole("menu")).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: "🤔 Test" })
+      ).toBeInTheDocument();
+    });
+
+    test("doesn't show the menu outside of autocompleting", async () => {
+      const dummy = defineComponent({
+        // @ts-expect-error Generic type seems to be broken
+        components: { Textarea2 },
+        setup() {
+          const modelValue = ref("");
+          const autocomplete = example;
+          return { modelValue, autocomplete };
+        },
+        template: `
+          <Textarea2 v-model="modelValue" :autocomplete />
+        `,
+      });
+
+      render(dummy);
+
+      expect(screen.queryByRole("menu")).not.toBeInTheDocument();
+    });
+
+    test("doesn't show the menu if no commands are found", async () => {
+      const dummy = defineComponent({
+        // @ts-expect-error Generic type seems to be broken
+        components: { Textarea2 },
+        setup() {
+          const modelValue = ref("");
+          const autocomplete = example;
+          return { modelValue, autocomplete };
+        },
+        template: `
+          <Textarea2 v-model="modelValue" :autocomplete />
+        `,
+      });
+
+      render(dummy);
+      await user.type(screen.getByRole("textbox"), "/xyz");
+
+      expect(screen.queryByRole("menu")).not.toBeInTheDocument();
+    });
+
+    test("doesn't show the menu if no command has been typed yet", async () => {
+      const dummy = defineComponent({
+        // @ts-expect-error Generic type seems to be broken
+        components: { Textarea2 },
+        setup() {
+          const modelValue = ref("");
+          const autocomplete = example;
+          return { modelValue, autocomplete };
+        },
+        template: `
+          <Textarea2 v-model="modelValue" :autocomplete />
+        `,
+      });
+
+      render(dummy);
+      await user.type(screen.getByRole("textbox"), "/");
+
+      expect(screen.queryByRole("menu")).not.toBeInTheDocument();
+    });
+
+    test("marks the first command as focused", async () => {
+      const dummy = defineComponent({
+        // @ts-expect-error Generic type seems to be broken
+        components: { Textarea2 },
+        setup() {
+          const modelValue = ref("");
+          const autocomplete = example;
+          return { modelValue, autocomplete };
+        },
+        template: `
+          <Textarea2 v-model="modelValue" :autocomplete />
+        `,
+      });
+
+      render(dummy);
+      await user.type(screen.getByRole("textbox"), "/e");
+
+      const items = screen.getAllByRole("button");
+      expect(items).toHaveLength(2);
+      expect(items[0]).toHaveAttribute("data-active", "true");
+      expect(items[1]).not.toHaveAttribute("data-active");
+    });
+
+    test("moves the focus up and down", async () => {
+      const dummy = defineComponent({
+        // @ts-expect-error Generic type seems to be broken
+        components: { Textarea2 },
+        setup() {
+          const modelValue = ref("");
+          const autocomplete = example;
+          return { modelValue, autocomplete };
+        },
+        template: `
+          <Textarea2 v-model="modelValue" :autocomplete />
+        `,
+      });
+
+      render(dummy);
+      const textbox = screen.getByRole("textbox");
+      await user.type(textbox, "/e");
+
+      const items = screen.getAllByRole("button");
+      expect(items).toHaveLength(2);
+      expect(items[0]).toHaveAttribute("data-active", "true");
+      expect(items[1]).not.toHaveAttribute("data-active");
+
+      await user.type(textbox, "{ArrowDown}");
+      expect(items[0]).not.toHaveAttribute("data-active");
+      expect(items[1]).toHaveAttribute("data-active", "true");
+
+      await user.type(textbox, "{ArrowUp}");
+      expect(items[0]).toHaveAttribute("data-active", "true");
+      expect(items[1]).not.toHaveAttribute("data-active");
+    });
+
+    test("doesn't move the focus past the last element", async () => {
+      const dummy = defineComponent({
+        // @ts-expect-error Generic type seems to be broken
+        components: { Textarea2 },
+        setup() {
+          const modelValue = ref("");
+          const autocomplete = example;
+          return { modelValue, autocomplete };
+        },
+        template: `
+          <Textarea2 v-model="modelValue" :autocomplete />
+        `,
+      });
+
+      render(dummy);
+      const textbox = screen.getByRole("textbox");
+      await user.type(textbox, "/e");
+
+      const items = screen.getAllByRole("button");
+      expect(items).toHaveLength(2);
+      expect(items[0]).toHaveAttribute("data-active", "true");
+      expect(items[1]).not.toHaveAttribute("data-active");
+
+      await user.type(textbox, "{ArrowDown}{ArrowDown}");
+      expect(items[0]).not.toHaveAttribute("data-active");
+      expect(items[1]).toHaveAttribute("data-active", "true");
+    });
+
+    test("doesn't move the focus before the first element", async () => {
+      const dummy = defineComponent({
+        // @ts-expect-error Generic type seems to be broken
+        components: { Textarea2 },
+        setup() {
+          const modelValue = ref("");
+          const autocomplete = example;
+          return { modelValue, autocomplete };
+        },
+        template: `
+          <Textarea2 v-model="modelValue" :autocomplete />
+        `,
+      });
+
+      render(dummy);
+      const textbox = screen.getByRole("textbox");
+      await user.type(textbox, "/e");
+
+      const items = screen.getAllByRole("button");
+      expect(items).toHaveLength(2);
+      expect(items[0]).toHaveAttribute("data-active", "true");
+      expect(items[1]).not.toHaveAttribute("data-active");
+
+      await user.type(textbox, "{ArrowUp}");
+      expect(items[0]).toHaveAttribute("data-active", "true");
+      expect(items[1]).not.toHaveAttribute("data-active");
+    });
+
+    test("hides the menu when the trigger is deleted", async () => {
+      const dummy = defineComponent({
+        // @ts-expect-error Generic type seems to be broken
+        components: { Textarea2 },
+        setup() {
+          const modelValue = ref("");
+          const autocomplete = example;
+          return { modelValue, autocomplete };
+        },
+        template: `
+          <Textarea2 v-model="modelValue" :autocomplete />
+        `,
+      });
+
+      render(dummy);
+      const textbox = screen.getByRole("textbox");
+      await user.type(textbox, "/t");
+      expect(screen.getByRole("menu")).toBeInTheDocument();
+
+      await user.type(textbox, "{Backspace}{Backspace}");
+      expect(screen.queryByRole("menu")).not.toBeInTheDocument();
+    });
+
+    test("hides the menu when typing a non-word character", async () => {
+      const dummy = defineComponent({
+        // @ts-expect-error Generic type seems to be broken
+        components: { Textarea2 },
+        setup() {
+          const modelValue = ref("");
+          const autocomplete = example;
+          return { modelValue, autocomplete };
+        },
+        template: `
+            <Textarea2 v-model="modelValue" :autocomplete />
+          `,
+      });
+
+      render(dummy);
+      const textbox = screen.getByRole("textbox");
+      await user.type(textbox, "/t");
+      expect(screen.getByRole("menu")).toBeInTheDocument();
+
+      await user.type(textbox, " ");
+      expect(screen.queryByRole("menu")).not.toBeInTheDocument();
+    });
+
+    test("keeps the menu open when pressing modifier keys", async () => {
+      const dummy = defineComponent({
+        // @ts-expect-error Generic type seems to be broken
+        components: { Textarea2 },
+        setup() {
+          const modelValue = ref("");
+          const autocomplete = example;
+          return { modelValue, autocomplete };
+        },
+        template: `
+          <Textarea2 v-model="modelValue" :autocomplete />
+        `,
+      });
+
+      render(dummy);
+      const textbox = screen.getByRole("textbox");
+      await user.type(textbox, "/t");
+      const menu = screen.getByRole("menu");
+      expect(menu).toBeInTheDocument();
+
+      await user.type(textbox, "{Alt}");
+      expect(menu).toBeInTheDocument();
+
+      await user.type(textbox, "{Control}");
+      expect(menu).toBeInTheDocument();
+
+      await user.type(textbox, "{Meta}");
+      expect(menu).toBeInTheDocument();
+
+      await user.type(textbox, "{Shift}");
+      expect(menu).toBeInTheDocument();
+    });
+
+    test("replaces the command with a static string", async () => {
+      const dummy = defineComponent({
+        // @ts-expect-error Generic type seems to be broken
+        components: { Textarea2 },
+        setup() {
+          const modelValue = ref("");
+          const autocomplete = example;
+          return { modelValue, autocomplete };
+        },
+        template: `
+          <Textarea2 v-model="modelValue" :autocomplete />
+        `,
+      });
+
+      render(dummy);
+      const textbox = screen.getByRole("textbox");
+      await user.type(textbox, "Hello /t{Enter}");
+
+      expect(textbox).toHaveValue("Hello test");
+    });
+
+    test("replaces the command with a dynamic string", async () => {
+      const value = vi.fn().mockReturnValue("foo");
+
+      const dummy = defineComponent({
+        // @ts-expect-error Generic type seems to be broken
+        components: { Textarea2 },
+        setup() {
+          const modelValue = ref("");
+          const autocomplete = [
+            {
+              trigger: "/",
+              id: "slash",
+              commands: [{ id: "test", name: "Test", value }],
+            },
+          ];
+          return { modelValue, autocomplete };
+        },
+        template: `
+          <Textarea2 v-model="modelValue" :autocomplete />
+        `,
+      });
+
+      render(dummy);
+      const textbox = screen.getByRole("textbox");
+      await user.type(textbox, "Hello /t{Enter}");
+
+      expect(textbox).toHaveValue("Hello foo");
+      expect(value).toHaveBeenCalled();
+    });
+
+    test("deletes the command when the value returns undefined", async () => {
+      const value = vi.fn().mockReturnValue(undefined);
+
+      const dummy = defineComponent({
+        // @ts-expect-error Generic type seems to be broken
+        components: { Textarea2 },
+        setup() {
+          const modelValue = ref("");
+          const autocomplete = [
+            {
+              trigger: "/",
+              id: "slash",
+              commands: [{ id: "test", name: "Test", value }],
+            },
+          ];
+          return { modelValue, autocomplete };
+        },
+        template: `
+            <Textarea2 v-model="modelValue" :autocomplete />
+          `,
+      });
+
+      render(dummy);
+      const textbox = screen.getByRole("textbox");
+      await user.type(textbox, "Hello /t{Enter}");
+
+      expect(textbox).toHaveValue("Hello ");
+      expect(value).toHaveBeenCalled();
+    });
+
+    test("runs a command on button click", async () => {
+      const value = vi.fn().mockReturnValue("foo");
+
+      const dummy = defineComponent({
+        // @ts-expect-error Generic type seems to be broken
+        components: { Textarea2 },
+        setup() {
+          const modelValue = ref("");
+          const autocomplete = [
+            {
+              trigger: "/",
+              id: "slash",
+              commands: [{ id: "test", name: "Test", value }],
+            },
+          ];
+          return { modelValue, autocomplete };
+        },
+        template: `
+          <Textarea2 v-model="modelValue" :autocomplete />
+        `,
+      });
+
+      render(dummy);
+      const textbox = screen.getByRole("textbox");
+      await user.type(textbox, "Hello /t");
+      await user.click(screen.getByRole("button", { name: "Test" }));
+
+      expect(textbox).toHaveValue("Hello foo");
+      expect(value).toHaveBeenCalled();
+    });
+
+    test("hides the menu after running a command", async () => {
+      const dummy = defineComponent({
+        // @ts-expect-error Generic type seems to be broken
+        components: { Textarea2 },
+        setup() {
+          const modelValue = ref("");
+          const autocomplete = example;
+          return { modelValue, autocomplete };
+        },
+        template: `
+          <Textarea2 v-model="modelValue" :autocomplete />
+        `,
+      });
+
+      render(dummy);
+      const textbox = screen.getByRole("textbox");
+      await user.type(textbox, "Hello /t");
+      expect(screen.getByRole("menu")).toBeInTheDocument();
+
+      await user.type(textbox, "{Enter}");
+      expect(screen.queryByRole("menu")).not.toBeInTheDocument();
+    });
+
+    test("displays the command's name", async () => {
+      const dummy = defineComponent({
+        // @ts-expect-error Generic type seems to be broken
+        components: { Textarea2 },
+        setup() {
+          const modelValue = ref("");
+          const autocomplete = example;
+          return { modelValue, autocomplete };
+        },
+        template: `
+          <Textarea2 v-model="modelValue" :autocomplete />
+        `,
+      });
+
+      render(dummy);
+      const textbox = screen.getByRole("textbox");
+      await user.type(textbox, "/t");
+      expect(screen.getByRole("button", { name: /Test/ })).toBeInTheDocument();
+    });
+
+    test("displays the command's icon", async () => {
+      const dummy = defineComponent({
+        // @ts-expect-error Generic type seems to be broken
+        components: { Textarea2 },
+        setup() {
+          const modelValue = ref("");
+          const autocomplete = example;
+          return { modelValue, autocomplete };
+        },
+        template: `
+          <Textarea2 v-model="modelValue" :autocomplete />
+        `,
+      });
+
+      render(dummy);
+      const textbox = screen.getByRole("textbox");
+      await user.type(textbox, "/t");
+      expect(screen.getByRole("button", { name: /🤔/ })).toBeInTheDocument();
+    });
+
+    test("filters commands by their names", async () => {
+      const dummy = defineComponent({
+        // @ts-expect-error Generic type seems to be broken
+        components: { Textarea2 },
+        setup() {
+          const modelValue = ref("");
+          const autocomplete = example;
+          return { modelValue, autocomplete };
+        },
+        template: `
+          <Textarea2 v-model="modelValue" :autocomplete />
+        `,
+      });
+
+      render(dummy);
+      const textbox = screen.getByRole("textbox");
+      await user.type(textbox, "/e");
+
+      const buttons = screen.getAllByRole("button");
+      expect(buttons).toHaveLength(2);
+
+      await user.type(textbox, "/ex");
+      expect(buttons).toHaveLength(2);
+    });
+
+    test("filter is not case-sensitive", async () => {
+      const dummy = defineComponent({
+        // @ts-expect-error Generic type seems to be broken
+        components: { Textarea2 },
+        setup() {
+          const modelValue = ref("");
+          const autocomplete = example;
+          return { modelValue, autocomplete };
+        },
+        template: `
+          <Textarea2 v-model="modelValue" :autocomplete />
+        `,
+      });
+
+      render(dummy);
+      const textbox = screen.getByRole("textbox");
+      await user.type(textbox, "/TEST");
+      expect(screen.getByRole("button", { name: /Test/ })).toBeInTheDocument();
+    });
+
+    test("shows initial commands when the query is empty", async () => {
+      const dummy = defineComponent({
+        // @ts-expect-error Generic type seems to be broken
+        components: { Textarea2 },
+        setup() {
+          const modelValue = ref("");
+          const autocomplete = [
+            {
+              trigger: "/",
+              id: "slash",
+              commands: [
+                { id: "init", name: "Initial", value: "foo", initial: true },
+              ],
+            },
+          ];
+          return { modelValue, autocomplete };
+        },
+        template: `
+          <Textarea2 v-model="modelValue" :autocomplete />
+        `,
+      });
+
+      render(dummy);
+      const textbox = screen.getByRole("textbox");
+      await user.type(textbox, "/");
+      expect(
+        screen.getByRole("button", { name: "Initial" })
+      ).toBeInTheDocument();
+    });
+  });
+
+  describe.todo("running in component context", () => {
     test.todo("provides the currently selected lines");
 
     test.todo("provides the selection start");

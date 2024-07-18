@@ -9,7 +9,8 @@
 > ⚠️ Work in progress. Things are most certainly incomplete and/or broken, and will definitely change.
 
 - 😌 Helpful, unobtrusive UX improvements like tabs and continuing lists
-- 🌱 Extensible to support custom syntax highlighting, interactions, and more
+- 🛠️ Highly customizable to support syntax highlighting, custom lists, and more
+- ✅ Support for autocompletions to support slash commands, mentions, etc.
 - 👌 Fully typed and tested
 - 🛝 Check out Tasks for a [demo](https://tasks.a13i.dev) and [example usage](https://github.com/andreasphil/tasks)
 

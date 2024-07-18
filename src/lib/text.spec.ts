@@ -11,6 +11,7 @@ import {
   indent,
   joinLines,
   mergeList,
+  replaceRange,
   splitAt,
   splitLines,
   type ContinueListResult,
@@ -105,6 +106,46 @@ describe("text", () => {
 
     it("doesn't crash if the index is out of bounds", () => {
       expect(duplicateLine(["1", "2", "3"], 100)).toEqual(["1", "2", "3"]);
+    });
+  });
+
+  describe("replace range", () => {
+    it("replaces a range in the middle", () => {
+      expect(replaceRange("one two three", 4, 8, "four")).toEqual(
+        "one four three"
+      );
+    });
+
+    it("replaces a range at the start", () => {
+      expect(replaceRange("one two three", 0, 4, "four")).toEqual(
+        "four two three"
+      );
+    });
+
+    it("replaces a range at the end", () => {
+      expect(replaceRange("one two three", 8, 14, "four")).toEqual(
+        "one two four"
+      );
+    });
+
+    it("doesn't crash if the input is empty", () => {
+      expect(replaceRange("", 0, 0, "four")).toEqual("four");
+    });
+
+    it("doesn't crash if the start index is out of bounds", () => {
+      expect(replaceRange("one two three", -5, 8, "four")).toEqual(
+        "four three"
+      );
+    });
+
+    it("doesn't crash if the end index is out of bounds", () => {
+      expect(replaceRange("one two three", 8, 99, "four")).toEqual("one two four");
+    });
+
+    it("inserts a string if from and to are identical", () => {
+      expect(replaceRange("one two three", 4, 5, "four ")).toEqual(
+        "one four two three"
+      );
     });
   });
 

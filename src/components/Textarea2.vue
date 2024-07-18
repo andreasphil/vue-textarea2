@@ -1,6 +1,6 @@
 <script setup lang="ts" generic="RowContext extends Record<string, any>">
 import * as text from "@/lib/text";
-import { computed, nextTick, ref, watch, watchEffect } from "vue";
+import { computed, nextTick, reactive, ref, watch, watchEffect } from "vue";
 
 type ContextProvider = (row: string) => RowContext;
 
@@ -11,6 +11,9 @@ const props = withDefaults(
      * arrow up/down.
      */
     allowFlipLines?: boolean;
+
+    /** Settings for autocompletion. Set to `null` to disable. */
+    autocomplete?: null | AutoComplete[];
 
     /**
      * A function that returns an object that provides additional information
@@ -86,6 +89,7 @@ const props = withDefaults(
   }>(),
   {
     allowFlipLines: true,
+    autocomplete: null,
     contextProvider: (_: string) => ({} as RowContext),
     continueLists: () => Object.values(text.continueListRules),
     cutFullLine: true,
@@ -208,7 +212,11 @@ function onInsertTab(event: KeyboardEvent): void {
  * List continuation                                  *
  * -------------------------------------------------- */
 
-function onContinueList(): void {
+function onContinueList(event: KeyboardEvent): void {
+  if (!props.continueLists || !props.continueLists.length) return;
+
+  event.preventDefault();
+
   const newRows = [...rows.value];
   const rules = props.continueLists ? props.continueLists : [];
 
@@ -329,6 +337,165 @@ function onPaste(event: ClipboardEvent): void {
 }
 
 /* -------------------------------------------------- *
+ * Autocomplete                                       *
+ * -------------------------------------------------- */
+
+const acContext = reactive<{
+  active: boolean;
+  focused: number;
+  menuX: string;
+  menuY: string;
+  mode?: AutoComplete;
+  query: string;
+  start: number;
+}>({
+  active: false,
+  focused: 0,
+  menuX: "0px",
+  menuY: "0px",
+  mode: undefined,
+  query: "",
+  start: 0,
+});
+
+const menuPositionText = ref<{ before: string; after: string }>();
+const menuPositionHelperEl = ref<HTMLElement | null>(null);
+
+async function determineAcMenuPosition(): Promise<{ x: string; y: string }> {
+  if (!acContext.active) return { x: "0px", y: "0px" };
+
+  menuPositionText.value = {
+    before: props.modelValue.substring(0, acContext.start),
+    after: props.modelValue.substring(acContext.start),
+  };
+
+  await nextTick();
+  const rect = menuPositionHelperEl.value?.getBoundingClientRect();
+  menuPositionText.value = undefined;
+
+  return {
+    x: rect?.right ? `${rect.right}px` : "0px",
+    y: rect?.bottom ? `${rect.bottom}px` : "0px",
+  };
+}
+
+function onAutocomplete(event: KeyboardEvent) {
+  if (!props.autocomplete) return;
+
+  const allowedKeys = [
+    "Alt",
+    "ArrowDown",
+    "ArrowUp",
+    "Backspace",
+    "Control",
+    "Meta",
+    "Shift",
+  ];
+
+  // No autocomplete context existing yet -> check if we need to create one
+  if (!acContext.active) {
+    const mode = props.autocomplete.find((i) => i.trigger === event.key);
+    if (!mode) return;
+
+    withContext(({ selectionStart }) => {
+      acContext.active = true;
+      acContext.mode = mode;
+      acContext.query = "";
+      acContext.start = selectionStart - 1; // Include trigger char
+
+      determineAcMenuPosition().then(({ x, y }) => {
+        acContext.menuX = x;
+        acContext.menuY = y;
+      });
+    });
+  }
+
+  // Hit enter -> run selected command
+  else if (event.key === "Enter") {
+    if (!acCommands.value[acContext.focused]) return;
+    execAutocomplete(acCommands.value[acContext.focused]);
+    event.preventDefault();
+  }
+
+  // Autocomplete was interrupted -> reset
+  else if (!allowedKeys.includes(event.key) && !event.key.match(/^\w$/)) {
+    endAutocomplete();
+  }
+
+  // User is typing -> update current command
+  else if (acContext.mode) {
+    let currentText = props.modelValue.substring(acContext.start);
+    const exp = new RegExp(`^\\${acContext.mode.trigger}(\\w*)`);
+    const match = currentText.match(exp);
+
+    if (match) acContext.query = match[1];
+    else endAutocomplete();
+  }
+}
+
+const acCommands = computed(() => {
+  if (!acContext.mode?.commands) return [];
+
+  const query = acContext.query?.toLowerCase();
+
+  // If the user hasn't entered anything yet, show the initial list
+  if (!query) return acContext.mode.commands.filter((i) => i.initial);
+
+  return acContext.mode.commands.filter((i) => {
+    const commandStr = i.name.toLowerCase();
+    return query && commandStr.includes(query);
+  });
+});
+
+function acFocusUp(event: KeyboardEvent) {
+  if (!acContext.active) return;
+  acContext.focused = Math.max(acContext.focused - 1, 0);
+  event.preventDefault();
+}
+
+function acFocusDown(event: KeyboardEvent) {
+  if (!acContext.active) return;
+  const next = acContext.focused + 1;
+  acContext.focused = Math.min(acCommands.value.length - 1, next);
+  event.preventDefault();
+}
+
+function execAutocomplete(command: AutoCompleteCommand) {
+  // Run and get result
+  let result: string | undefined = undefined;
+  if (typeof command.value === "function") result = command.value();
+  else if (typeof command.value === "string") result = command.value;
+  result ??= "";
+
+  // Apply changes
+  withContext(({ selectionEnd, adjustSelection }) => {
+    const next = text.replaceRange(
+      props.modelValue,
+      acContext.start,
+      selectionEnd + 1,
+      result
+    );
+
+    setLocalModelValue(next);
+
+    const newStart = acContext.start + result.length;
+    adjustSelection({ to: "absolute", start: newStart }, true);
+  });
+
+  endAutocomplete();
+}
+
+function endAutocomplete() {
+  acContext.active = false;
+  acContext.focused = 0;
+  acContext.menuX = "0px";
+  acContext.menuY = "0px";
+  acContext.mode = undefined;
+  acContext.query = "";
+  acContext.start = 0;
+}
+
+/* -------------------------------------------------- *
  * Public interface                                   *
  * -------------------------------------------------- */
 
@@ -407,6 +574,8 @@ defineExpose({ withContext });
 </script>
 
 <script lang="ts">
+import type { Component } from "vue";
+
 export type AdjustSelectionOpts =
   | { to: "absolute"; start: number; end?: number }
   | { to: "relative"; delta: number; collapse?: boolean }
@@ -420,6 +589,50 @@ export type EditingContext = {
   selectedLines: [from: number, to: number];
   selectionStart: number;
   selectionEnd: number;
+};
+
+export type AutoComplete = {
+  /** The unique identifier of the autocomplete mode. Can be any string. */
+  id: string;
+
+  /**
+   * Character that triggers the autocomplete when the user types it. Note that
+   * this MUST have a `length` of exactly 1.
+   */
+  trigger: string;
+
+  /** Commands associated with this autocomplete mode. */
+  commands: AutoCompleteCommand[];
+};
+
+export type AutoCompleteCommand = {
+  /** The unique identifier of the command. Can be any string. */
+  id: string;
+
+  /** The visible name of the command. */
+  name: string;
+
+  /**
+   * Icon of the command. Should be a component, for example an SVG or a
+   * function returning some string (e.g. an emoji).
+   */
+  icon?: Component;
+
+  /**
+   * Value of the command. If the value is a string or returns a string,
+   * the autocomplete sequence will be replaced by that string. If the
+   * value is undefined or returns undefined, the autocomplete sequence
+   * will be removed. This can still be useful if you want to run some
+   * functionality without inserting any text.
+   */
+  value: string | (() => string | undefined);
+
+  /**
+   * If set to true, the command will be shown by default when the menu is
+   * opened, but no query has been entered yet. You can use this to display
+   * an initial list of items immediately when the trigger char is typed.
+   */
+  initial?: boolean;
 };
 </script>
 
@@ -436,14 +649,20 @@ export type EditingContext = {
       @input="onInput"
       @keydown.alt.down.prevent="allowFlipLines ? onFlip('down') : undefined"
       @keydown.alt.up.prevent="allowFlipLines ? onFlip('up') : undefined"
-      @keydown.enter.prevent="onContinueList()"
+      @keydown.enter="
+        acContext.active ? onAutocomplete($event) : onContinueList($event)
+      "
       @keydown.meta.shift.d="duplicateLine ? onDuplicate($event) : undefined"
       @keydown.meta.shift.k="deleteLine ? onDelete($event) : undefined"
       @keydown.meta.x="cutFullLine ? onCut($event) : undefined"
       @keydown.tab.prevent="insertTabs ? onInsertTab($event) : undefined"
+      @keydown.up="acContext.active ? acFocusUp($event) : undefined"
+      @keydown.down="acContext.active ? acFocusDown($event) : undefined"
+      @keyup="onAutocomplete($event)"
       @paste="mergeListsOnPaste ? onPaste($event) : undefined"
       ref="textareaEl"
     />
+
     <div :class="$style.output" data-testid="output">
       <div
         v-for="({ row, key, context }, i) in rowsWithContext"
@@ -455,6 +674,32 @@ export type EditingContext = {
         </slot>
       </div>
     </div>
+
+    <div
+      v-if="menuPositionText !== undefined"
+      :class="$style.menuPositionHelper"
+    >
+      <span>{{ menuPositionText.before }}</span>
+      <span ref="menuPositionHelperEl"></span>
+      <span>{{ menuPositionText.after }}</span>
+    </div>
+
+    <!-- Autocomplete menu -->
+    <menu
+      v-if="autocomplete && acContext.active && acCommands.length"
+      :class="$style.autocomplete"
+      role="menu"
+    >
+      <li v-for="(command, i) in acCommands" :key="command.id">
+        <button
+          :data-active="acContext.focused === i ? true : undefined"
+          @click="execAutocomplete(command)"
+        >
+          <component v-if="command.icon" :is="command.icon" />
+          {{ command.name }}
+        </button>
+      </li>
+    </menu>
   </div>
 </template>
 
@@ -524,5 +769,22 @@ export type EditingContext = {
 
 .row {
   min-height: 1lh;
+}
+
+/* -------------------------------------------------- *
+ * Autocomplete menu                                  *
+ * -------------------------------------------------- */
+
+.autocomplete {
+  position: fixed;
+  top: v-bind("acContext.menuY");
+  left: v-bind("acContext.menuX");
+}
+
+.menuPositionHelper {
+  left: 0;
+  position: absolute;
+  top: 0;
+  white-space: pre-wrap;
 }
 </style>

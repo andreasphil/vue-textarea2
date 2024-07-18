@@ -28,6 +28,20 @@ export function duplicateLine(value: string[], index: number): string[] {
   return [...value.slice(0, index), value[index], ...value.slice(index)];
 }
 
+/**
+ * Replaces the character range in the specified string with the new value.
+ * Similarly to `String.prototype.substring`, characters are replaced from
+ * (and including) `from`, up to (but not including) `end`.
+ */
+export function replaceRange(
+  text: string,
+  from: number,
+  to: number,
+  replaceWith: string
+) {
+  return text.substring(0, from) + replaceWith + text.substring(to - 1);
+}
+
 /* -------------------------------------------------- *
  * Selection and cursor position                      *
  * -------------------------------------------------- */
