@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import AutocompleteDemo from "@/demo/AutocompleteDemo.vue";
 import CustomStylingDemo from "@/demo/CustomStylingDemo.vue";
 import ReadonlyDemo from "@/demo/ReadonlyDemo.vue";
 import SimpleDemo from "@/demo/SimpleDemo.vue";
@@ -39,6 +40,9 @@ onMounted(() => {
           <a href="#custom-styling">Custom styling</a>
         </li>
         <li>
+          <a href="#autocomplete">Autocomplete</a>
+        </li>
+        <li>
           <a href="#syntax-highlighting">Syntax highlighting</a>
         </li>
         <li>
@@ -48,6 +52,7 @@ onMounted(() => {
     </nav>
     <SimpleDemo v-if="route === '#simple'" />
     <CustomStylingDemo v-else-if="route === '#custom-styling'" />
+    <AutocompleteDemo v-else-if="route === '#autocomplete'" />
     <SyntaxHighlightingDemo v-else-if="route === '#syntax-highlighting'" />
     <ReadonlyDemo v-else-if="route === '#readonly'" />
   </main>
@@ -65,19 +70,38 @@ main {
   margin: auto;
   max-width: 70ch;
   padding: 4rem 1rem;
-  > :first-child { margin-top: 0; }
-  > :last-child { margin-bottom: 0; }
+  > :first-child {
+    margin-top: 0;
+  }
+  > :last-child {
+    margin-bottom: 0;
+  }
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   margin: 2em 0 1rem;
 }
 
-article, blockquote, header, footer, ol, ul, hr, p, pre {
+article,
+blockquote,
+header,
+footer,
+ol,
+ul,
+hr,
+p,
+pre {
   margin: 1.5em 0;
 }
 
-*, ::before, ::after {
+*,
+::before,
+::after {
   box-sizing: border-box;
 }
 
