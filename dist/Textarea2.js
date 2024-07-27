@@ -1,11 +1,12 @@
-import { defineComponent as G, useCssVars as J, ref as C, computed as B, watchEffect as Q, watch as U, openBlock as N, createElementBlock as $, normalizeClass as g, createElementVNode as T, withKeys as L, withModifiers as y, Fragment as X, renderList as Y, renderSlot as Z, createTextVNode as _, toDisplayString as ee, nextTick as F } from "vue";
-import { continueListRules as te, splitLines as ne, getSelectedLines as oe, joinLines as v, indent as le, getCursorInLine as ie, continueList as ae, deleteLine as D, duplicateLine as se, mergeList as re, getRangeFromSelectedLines as b, flip as ue } from "./text.js";
-const de = ["readonly", "spellcheck", "value"], ce = /* @__PURE__ */ G({
+import { defineComponent as se, useCssVars as re, ref as $, computed as h, watchEffect as ue, watch as de, reactive as ce, openBlock as y, createElementBlock as w, normalizeClass as g, createElementVNode as b, withKeys as v, withModifiers as k, Fragment as K, renderList as X, renderSlot as fe, createTextVNode as Y, toDisplayString as B, createCommentVNode as D, createBlock as pe, resolveDynamicComponent as ve, nextTick as P } from "vue";
+import { continueListRules as me, splitLines as ye, getSelectedLines as Le, joinLines as L, indent as we, getCursorInLine as ge, continueList as be, deleteLine as z, duplicateLine as ke, mergeList as Se, replaceRange as Re, getRangeFromSelectedLines as T, flip as xe } from "./text.js";
+const Ce = ["readonly", "spellcheck", "value"], $e = ["data-active", "onClick"], he = /* @__PURE__ */ se({
   __name: "Textarea2",
   props: {
     allowFlipLines: { type: Boolean, default: !0 },
-    contextProvider: { type: Function, default: (m) => ({}) },
-    continueLists: { type: [Boolean, Array], default: () => Object.values(te) },
+    autocomplete: { default: null },
+    contextProvider: { type: Function, default: (S) => ({}) },
+    continueLists: { type: [Boolean, Array], default: () => Object.values(me) },
     cutFullLine: { type: Boolean, default: !0 },
     deleteLine: { type: Boolean, default: !0 },
     duplicateLine: { type: Boolean, default: !0 },
@@ -18,152 +19,236 @@ const de = ["readonly", "spellcheck", "value"], ce = /* @__PURE__ */ G({
     tabSize: { default: 4 }
   },
   emits: ["update:modelValue"],
-  setup(m, { expose: S, emit: w }) {
-    J((e) => ({
-      "5509c433": P.value,
-      "307c2ae4": e.tabSize,
-      bfdbe7f4: O.value
+  setup(S, { expose: E, emit: C }) {
+    re((e) => ({
+      f2e3bcd8: G.value,
+      "86829dba": e.tabSize,
+      fc16d5b2: N.value,
+      "1fadd074": o.menuY,
+      "1fadd076": o.menuX
     }));
-    const s = m, R = w, r = C(null);
-    function f(e) {
-      const t = Array.isArray(e) ? v(e) : e;
-      R("update:modelValue", t);
+    const s = S, O = C, d = $(null);
+    function p(e) {
+      const t = Array.isArray(e) ? L(e) : e;
+      O("update:modelValue", t);
     }
-    function j(e) {
-      e.target instanceof HTMLTextAreaElement && f(e.target.value);
+    function U(e) {
+      e.target instanceof HTMLTextAreaElement && p(e.target.value);
     }
-    const d = B(() => ne(s.modelValue)), M = B(
-      () => d.value.map((e, t) => ({
+    const c = h(() => ye(s.modelValue)), W = h(
+      () => c.value.map((e, t) => ({
         row: e,
         key: `${t}#${e}`,
         context: s.contextProvider(e)
       }))
-    ), O = C("auto");
-    async function E() {
+    ), N = $("auto");
+    async function F() {
       var e, t;
-      O.value = "auto", await F(), O.value = (e = r.value) != null && e.scrollHeight ? `${(t = r.value) == null ? void 0 : t.scrollHeight}px` : "auto";
+      N.value = "auto", await P(), N.value = (e = d.value) != null && e.scrollHeight ? `${(t = d.value) == null ? void 0 : t.scrollHeight}px` : "auto";
     }
-    Q(() => {
-      r.value && E();
-    }), U(
+    ue(() => {
+      d.value && F();
+    }), de(
       () => s.modelValue,
       () => {
-        r.value && E();
+        d.value && F();
       }
     );
-    const P = B(() => s.scrollBeyondLastLine === !0 ? "18rem" : typeof s.scrollBeyondLastLine == "number" ? `${s.scrollBeyondLastLine}rem` : void 0);
-    function H(e) {
-      const t = [...d.value], n = e.shiftKey ? "outdent" : "indent";
-      p(({ adjustSelection: i, selectedLines: o }) => {
-        const [l, a] = o, u = t.slice(l, a + 1), c = le(u, n);
-        u.every((W, q) => W === c[q]) || (t.splice(l, a - l + 1, ...c), f(v(t)), i(l === a ? { to: "relative", delta: n === "indent" ? 1 : -1 } : { to: "lines", start: l, end: a }));
+    const G = h(() => s.scrollBeyondLastLine === !0 ? "18rem" : typeof s.scrollBeyondLastLine == "number" ? `${s.scrollBeyondLastLine}rem` : void 0);
+    function J(e) {
+      const t = [...c.value], n = e.shiftKey ? "outdent" : "indent";
+      f(({ adjustSelection: i, selectedLines: l }) => {
+        const [a, r] = l, m = t.slice(a, r + 1), u = we(m, n);
+        m.every((ie, ae) => ie === u[ae]) || (t.splice(a, r - a + 1, ...u), p(L(t)), i(a === r ? { to: "relative", delta: n === "indent" ? 1 : -1 } : { to: "lines", start: a, end: r }));
       });
     }
-    function I() {
-      const e = [...d.value], t = s.continueLists ? s.continueLists : [];
-      p(({ selectionStart: n, selectedLines: i, adjustSelection: o }) => {
-        const [l] = i, a = ie(s.modelValue, n), u = ae(e[l], t, a);
-        e.splice(l, 1, u.current), u.next !== null && e.splice(l + 1, 0, u.next), f(v(e)), "didContinue" in u && u.didContinue ? o({ to: "relative", delta: u.match.length + 1 }) : "didEnd" in u && u.didEnd ? o({ to: "startOfLine", startOf: l }) : o({ to: "relative", delta: 1 });
-      });
-    }
-    function k(e) {
-      const t = [...d.value];
-      p(({ selectedLines: n, adjustSelection: i }) => {
-        const [o, l] = n, a = e === "up" ? o - 1 : o + 1;
-        if (o !== l || a < 0 || a >= t.length)
-          return;
-        const [u, c] = ue(t[o], t[a]);
-        t[o] = u, t[a] = c, f(v(t)), i({ to: "endOfLine", endOf: a });
+    function Q(e) {
+      if (!s.continueLists || !s.continueLists.length) return;
+      e.preventDefault();
+      const t = [...c.value], n = s.continueLists ? s.continueLists : [];
+      f(({ selectionStart: i, selectedLines: l, adjustSelection: a }) => {
+        const [r] = l, m = ge(s.modelValue, i), u = be(t[r], n, m);
+        t.splice(r, 1, u.current), u.next !== null && t.splice(r + 1, 0, u.next), p(L(t)), "didContinue" in u && u.didContinue ? a({ to: "relative", delta: u.match.length + 1 }) : "didEnd" in u && u.didEnd ? a({ to: "startOfLine", startOf: r }) : a({ to: "relative", delta: 1 });
       });
     }
     function A(e) {
-      p(async (t) => {
-        const [n, i] = t.selectedLines;
-        if (n !== i || t.selectionStart !== t.selectionEnd)
-          return;
-        e.preventDefault(), await navigator.clipboard.writeText(d.value[n]);
-        const o = D(d.value, n);
-        f(v(o));
-        const l = Math.min(n, o.length - 1);
-        t.adjustSelection({ to: "endOfLine", endOf: l });
+      const t = [...c.value];
+      f(({ selectedLines: n, adjustSelection: i }) => {
+        const [l, a] = n, r = e === "up" ? l - 1 : l + 1;
+        if (l !== a || r < 0 || r >= t.length) return;
+        const [m, u] = xe(t[l], t[r]);
+        t[l] = m, t[r] = u, p(L(t)), i({ to: "endOfLine", endOf: r });
       });
     }
-    function x(e) {
-      p(async (t) => {
+    function Z(e) {
+      f(async (t) => {
         const [n, i] = t.selectedLines;
-        if (n !== i || t.selectionStart !== t.selectionEnd)
-          return;
+        if (n !== i || t.selectionStart !== t.selectionEnd) return;
+        e.preventDefault(), await navigator.clipboard.writeText(c.value[n]);
+        const l = z(c.value, n);
+        p(L(l));
+        const a = Math.min(n, l.length - 1);
+        t.adjustSelection({ to: "endOfLine", endOf: a });
+      });
+    }
+    function _(e) {
+      f(async (t) => {
+        const [n, i] = t.selectedLines;
+        if (n !== i || t.selectionStart !== t.selectionEnd) return;
         e.preventDefault();
-        const o = se(d.value, n);
-        f(v(o)), t.adjustSelection({ to: "endOfLine", endOf: n + 1 });
+        const l = ke(c.value, n);
+        p(L(l)), t.adjustSelection({ to: "endOfLine", endOf: n + 1 });
       });
     }
-    function z(e) {
-      p(async (t) => {
+    function ee(e) {
+      f(async (t) => {
         const [n, i] = t.selectedLines;
-        if (n !== i || t.selectionStart !== t.selectionEnd)
-          return;
+        if (n !== i || t.selectionStart !== t.selectionEnd) return;
         e.preventDefault();
-        const o = D(d.value, n);
-        f(v(o));
-        const l = Math.min(n, o.length - 1);
-        t.adjustSelection({ to: "endOfLine", endOf: l });
+        const l = z(c.value, n);
+        p(L(l));
+        const a = Math.min(n, l.length - 1);
+        t.adjustSelection({ to: "endOfLine", endOf: a });
       });
     }
-    function K(e) {
+    function te(e) {
       var i;
-      const t = (i = e.clipboardData) == null ? void 0 : i.getData("text/plain"), n = [...d.value];
-      p(({ selectedLines: o, adjustSelection: l }) => {
-        if (!t || !s.continueLists)
-          return;
-        const [a, u] = o;
-        if (a !== u)
-          return;
-        const c = re(n[a], t, s.continueLists);
-        c !== null && (e.preventDefault(), n[a] = c.current, f(v(n)), l({
+      const t = (i = e.clipboardData) == null ? void 0 : i.getData("text/plain"), n = [...c.value];
+      f(({ selectedLines: l, adjustSelection: a }) => {
+        if (!t || !s.continueLists) return;
+        const [r, m] = l;
+        if (r !== m) return;
+        const u = Se(n[r], t, s.continueLists);
+        u !== null && (e.preventDefault(), n[r] = u.current, p(L(n)), a({
           to: "relative",
-          delta: c.current.length - c.match.length,
+          delta: u.current.length - u.match.length,
           collapse: !0
         }));
       });
     }
-    async function V(e, t = !0) {
-      if (!r.value)
-        return;
-      const { selectionStart: n, selectionEnd: i } = r.value;
-      if (t && await F(), e.to === "absolute")
-        r.value.setSelectionRange(e.start, e.end ?? e.start);
+    const o = ce({
+      active: !1,
+      focused: 0,
+      menuX: "0px",
+      menuY: "0px",
+      mode: void 0,
+      query: "",
+      start: 0
+    }), R = $(), H = $(null);
+    async function ne() {
+      var t;
+      if (!o.active) return { x: "0px", y: "0px" };
+      R.value = {
+        before: s.modelValue.substring(0, o.start),
+        after: s.modelValue.substring(o.start)
+      }, await P();
+      const e = (t = H.value) == null ? void 0 : t.getBoundingClientRect();
+      return R.value = void 0, {
+        x: e != null && e.right ? `${e.right}px` : "0px",
+        y: e != null && e.bottom ? `${e.bottom}px` : "0px"
+      };
+    }
+    function M(e) {
+      if (!s.autocomplete) return;
+      const t = [
+        "Alt",
+        "ArrowDown",
+        "ArrowUp",
+        "Backspace",
+        "Control",
+        "Meta",
+        "Shift"
+      ];
+      if (o.active) {
+        if (e.key === "Enter") {
+          if (!x.value[o.focused]) return;
+          j(x.value[o.focused]), e.preventDefault();
+        } else if (!t.includes(e.key) && !e.key.match(/^\w$/))
+          V();
+        else if (o.mode) {
+          let n = s.modelValue.substring(o.start);
+          const i = new RegExp(`^\\${o.mode.trigger}(\\w*)`), l = n.match(i);
+          l ? o.query = l[1] : V();
+        }
+      } else {
+        const n = s.autocomplete.find((i) => i.trigger === e.key);
+        if (!n) return;
+        f(({ selectionStart: i }) => {
+          o.active = !0, o.mode = n, o.query = "", o.start = i - 1, ne().then(({ x: l, y: a }) => {
+            o.menuX = l, o.menuY = a;
+          });
+        });
+      }
+    }
+    const x = h(() => {
+      var t, n;
+      if (!((t = o.mode) != null && t.commands)) return [];
+      const e = (n = o.query) == null ? void 0 : n.toLowerCase();
+      return e ? o.mode.commands.filter((i) => {
+        const l = i.name.toLowerCase();
+        return e && l.includes(e);
+      }) : o.mode.commands.filter((i) => i.initial);
+    });
+    function oe(e) {
+      o.active && (o.focused = Math.max(o.focused - 1, 0), e.preventDefault());
+    }
+    function le(e) {
+      if (!o.active) return;
+      const t = o.focused + 1;
+      o.focused = Math.min(x.value.length - 1, t), e.preventDefault();
+    }
+    function j(e) {
+      let t;
+      typeof e.value == "function" ? t = e.value() : typeof e.value == "string" && (t = e.value), t ?? (t = ""), f(({ selectionEnd: n, adjustSelection: i }) => {
+        const l = Re(
+          s.modelValue,
+          o.start,
+          n + 1,
+          t
+        );
+        p(l);
+        const a = o.start + t.length;
+        i({ to: "absolute", start: a }, !0);
+      }), V();
+    }
+    function V() {
+      o.active = !1, o.focused = 0, o.menuX = "0px", o.menuY = "0px", o.mode = void 0, o.query = "", o.start = 0;
+    }
+    async function q(e, t = !0) {
+      if (!d.value) return;
+      const { selectionStart: n, selectionEnd: i } = d.value;
+      if (t && await P(), e.to === "absolute")
+        d.value.setSelectionRange(e.start, e.end ?? e.start);
       else if (e.to === "relative") {
-        const o = n + e.delta, l = e.collapse ? o : i + e.delta;
-        r.value.setSelectionRange(o, l);
+        const l = n + e.delta, a = e.collapse ? l : i + e.delta;
+        d.value.setSelectionRange(l, a);
       } else if (e.to === "startOfLine") {
-        const [o] = b(d.value, e.startOf);
-        r.value.setSelectionRange(o, o);
+        const [l] = T(c.value, e.startOf);
+        d.value.setSelectionRange(l, l);
       } else if (e.to === "endOfLine") {
-        const [, o] = b(d.value, e.endOf);
-        r.value.setSelectionRange(o, o);
+        const [, l] = T(c.value, e.endOf);
+        d.value.setSelectionRange(l, l);
       } else if (e.to === "lines") {
-        const [o, l] = b(
-          d.value,
+        const [l, a] = T(
+          c.value,
           e.start,
           e.end
         );
-        r.value.setSelectionRange(o, l);
+        d.value.setSelectionRange(l, a);
       }
     }
-    function h(e) {
+    function I(e) {
       var t;
-      (t = r.value) == null || t.focus(), e && V(e);
+      (t = d.value) == null || t.focus(), e && q(e);
     }
-    async function p(e, t = { ignoreReadonly: !1 }) {
-      if (!r.value || s.readonly && !t.ignoreReadonly)
-        return;
-      const { selectionStart: n, selectionEnd: i } = r.value;
+    async function f(e, t = { ignoreReadonly: !1 }) {
+      if (!d.value || s.readonly && !t.ignoreReadonly) return;
+      const { selectionStart: n, selectionEnd: i } = d.value;
       await e({
-        adjustSelection: V,
-        focus: h,
-        selectedLines: oe(
-          d.value,
+        adjustSelection: q,
+        focus: I,
+        selectedLines: Le(
+          c.value,
           n,
           i
         ),
@@ -171,62 +256,95 @@ const de = ["readonly", "spellcheck", "value"], ce = /* @__PURE__ */ G({
         selectionStart: n
       });
     }
-    return S({ withContext: p }), (e, t) => (N(), $("div", {
+    return E({ withContext: f }), (e, t) => (y(), w("div", {
       class: g({ [e.$style.wrapper]: !0, [e.$style.wrapperReadonly]: e.readonly }),
-      onClick: t[8] || (t[8] = (n) => h())
+      onClick: t[11] || (t[11] = (n) => I())
     }, [
-      T("textarea", {
+      b("textarea", {
         class: g(e.$style.textarea),
         readonly: e.readonly,
         spellcheck: e.spellcheck,
         value: s.modelValue,
-        onInput: j,
+        onInput: U,
         onKeydown: [
-          t[0] || (t[0] = L(y((n) => e.allowFlipLines ? k("down") : void 0, ["alt", "prevent"]), ["down"])),
-          t[1] || (t[1] = L(y((n) => e.allowFlipLines ? k("up") : void 0, ["alt", "prevent"]), ["up"])),
-          t[2] || (t[2] = L(y((n) => I(), ["prevent"]), ["enter"])),
-          t[3] || (t[3] = L(y((n) => e.duplicateLine ? x(n) : void 0, ["meta", "shift"]), ["d"])),
-          t[4] || (t[4] = L(y((n) => e.deleteLine ? z(n) : void 0, ["meta", "shift"]), ["k"])),
-          t[5] || (t[5] = L(y((n) => e.cutFullLine ? A(n) : void 0, ["meta"]), ["x"])),
-          t[6] || (t[6] = L(y((n) => e.insertTabs ? H(n) : void 0, ["prevent"]), ["tab"]))
+          t[0] || (t[0] = v(k((n) => e.allowFlipLines ? A("down") : void 0, ["alt", "prevent"]), ["down"])),
+          t[1] || (t[1] = v(k((n) => e.allowFlipLines ? A("up") : void 0, ["alt", "prevent"]), ["up"])),
+          t[2] || (t[2] = v((n) => o.active ? M(n) : Q(n), ["enter"])),
+          t[3] || (t[3] = v(k((n) => e.duplicateLine ? _(n) : void 0, ["meta", "shift"]), ["d"])),
+          t[4] || (t[4] = v(k((n) => e.deleteLine ? ee(n) : void 0, ["meta", "shift"]), ["k"])),
+          t[5] || (t[5] = v(k((n) => e.cutFullLine ? Z(n) : void 0, ["meta"]), ["x"])),
+          t[6] || (t[6] = v(k((n) => e.insertTabs ? J(n) : void 0, ["prevent"]), ["tab"])),
+          t[7] || (t[7] = v((n) => o.active ? oe(n) : void 0, ["up"])),
+          t[8] || (t[8] = v((n) => o.active ? le(n) : void 0, ["down"]))
         ],
-        onPaste: t[7] || (t[7] = (n) => e.mergeListsOnPaste ? K(n) : void 0),
+        onKeyup: t[9] || (t[9] = (n) => M(n)),
+        onPaste: t[10] || (t[10] = (n) => e.mergeListsOnPaste ? te(n) : void 0),
         ref_key: "textareaEl",
-        ref: r
-      }, null, 42, de),
-      T("div", {
+        ref: d
+      }, null, 42, Ce),
+      b("div", {
         class: g(e.$style.output),
         "data-testid": "output"
       }, [
-        (N(!0), $(X, null, Y(M.value, ({ row: n, key: i, context: o }, l) => (N(), $("div", {
+        (y(!0), w(K, null, X(W.value, ({ row: n, key: i, context: l }, a) => (y(), w("div", {
           class: g(e.$style.row),
           key: i
         }, [
-          Z(e.$slots, "row", {
+          fe(e.$slots, "row", {
             row: n,
-            context: o,
-            index: l
+            context: l,
+            index: a
           }, () => [
-            _(ee(n), 1)
+            Y(B(n), 1)
           ])
         ], 2))), 128))
-      ], 2)
+      ], 2),
+      R.value !== void 0 ? (y(), w("div", {
+        key: 0,
+        class: g(e.$style.menuPositionHelper)
+      }, [
+        b("span", null, B(R.value.before), 1),
+        b("span", {
+          ref_key: "menuPositionHelperEl",
+          ref: H
+        }, null, 512),
+        b("span", null, B(R.value.after), 1)
+      ], 2)) : D("", !0),
+      e.autocomplete && o.active && x.value.length ? (y(), w("menu", {
+        key: 1,
+        class: g(e.$style.autocomplete),
+        role: "menu"
+      }, [
+        (y(!0), w(K, null, X(x.value, (n, i) => (y(), w("li", {
+          key: n.id
+        }, [
+          b("button", {
+            "data-active": o.focused === i ? !0 : void 0,
+            onClick: (l) => j(n)
+          }, [
+            n.icon ? (y(), pe(ve(n.icon), { key: 0 })) : D("", !0),
+            Y(" " + B(n.name), 1)
+          ], 8, $e)
+        ]))), 128))
+      ], 2)) : D("", !0)
     ], 2));
   }
-}), fe = "_wrapper_11m78_6", pe = "_wrapperReadonly_11m78_17", ve = "_textarea_11m78_25", Le = "_output_11m78_31", ye = "_row_11m78_65", me = {
-  wrapper: fe,
-  wrapperReadonly: pe,
-  textarea: ve,
-  output: Le,
-  row: ye
-}, we = (m, S) => {
-  const w = m.__vccOpts || m;
-  for (const [s, R] of S)
-    w[s] = R;
-  return w;
-}, ge = {
-  $style: me
-}, Oe = /* @__PURE__ */ we(ce, [["__cssModules", ge]]);
+}), Be = "_wrapper_fvblc_6", Ee = "_wrapperReadonly_fvblc_17", Oe = "_textarea_fvblc_25", Ne = "_output_fvblc_31", Ve = "_row_fvblc_65", De = "_autocomplete_fvblc_73", Pe = "_menuPositionHelper_fvblc_79", Te = {
+  wrapper: Be,
+  wrapperReadonly: Ee,
+  textarea: Oe,
+  output: Ne,
+  row: Ve,
+  autocomplete: De,
+  menuPositionHelper: Pe
+}, Fe = (S, E) => {
+  const C = S.__vccOpts || S;
+  for (const [s, O] of E)
+    C[s] = O;
+  return C;
+}, Ae = {
+  $style: Te
+}, je = /* @__PURE__ */ Fe(he, [["__cssModules", Ae]]);
 export {
-  Oe as default
+  je as default
 };

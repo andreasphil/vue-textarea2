@@ -9,6 +9,12 @@ export declare function deleteLine(value: string[], index: number): string[];
 /** Duplicates the line at the specified index. */
 export declare function duplicateLine(value: string[], index: number): string[];
 /**
+ * Replaces the character range in the specified string with the new value.
+ * Similarly to `String.prototype.substring`, characters are replaced from
+ * (and including) `from`, up to (but not including) `end`.
+ */
+export declare function replaceRange(text: string, from: number, to: number, replaceWith: string): string;
+/**
  * For a selection beginning at `from` and ending at `to`, returns the line
  * numbers of the first and last selected line.
  *
