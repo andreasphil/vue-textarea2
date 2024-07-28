@@ -1,0 +1,45 @@
+/* -------------------------------------------------- *
+ * Textarea + related components styling              *
+ * -------------------------------------------------- */
+
+textarea {
+  /* The caret color needs to be set explicitly, otherwise it will be invisible.
+  Using !important here for simplicity, but you can also apply a class to the
+  Textarea2 component and set the styling there. */
+  caret-color: blue !important;
+}
+
+/* The menu element is used for the autocomplete menu. Like the textarea, it
+only comes with the absolute minimum of styling needed for layout and
+positioning. Style the following elements to make it look as you need it:
+menu, li, button, button[data-active="true"] (for the selected menu item).
+Also similarly to the textarea, you can either do it globally like in this
+file, or apply a class to the Textarea2 component and style the elements if
+they're children of that class. */
+menu {
+  margin: 0;
+  padding: 0.5rem;
+  background-color: white;
+  border: 1px solid black;
+
+  li {
+    list-style-type: none;
+
+    & + & {
+      margin-top: 0.25rem;
+    }
+  }
+
+  button {
+    font: inherit;
+    background-color: white;
+    border: 1px solid black;
+    padding: 0.25rem 0.5rem;
+    display: block;
+    width: 100%;
+
+    &[data-active="true"] {
+      background-color: lightskyblue;
+    }
+  }
+}
