@@ -1,11 +1,11 @@
-import { defineComponent as se, useCssVars as re, ref as $, computed as h, watchEffect as ue, watch as de, reactive as ce, openBlock as y, createElementBlock as w, normalizeClass as g, createElementVNode as b, withKeys as v, withModifiers as k, Fragment as K, renderList as X, renderSlot as fe, createTextVNode as Y, toDisplayString as B, createCommentVNode as D, createBlock as pe, resolveDynamicComponent as ve, nextTick as P } from "vue";
-import { continueListRules as me, splitLines as ye, getSelectedLines as Le, joinLines as L, indent as we, getCursorInLine as ge, continueList as be, deleteLine as z, duplicateLine as ke, mergeList as Se, replaceRange as Re, getRangeFromSelectedLines as T, flip as xe } from "./text.js";
+import { defineComponent as se, useCssVars as re, ref as $, computed as h, watchEffect as ue, watch as de, reactive as ce, openBlock as y, createElementBlock as w, normalizeClass as g, createElementVNode as k, withKeys as v, withModifiers as S, Fragment as K, renderList as X, renderSlot as fe, createTextVNode as Y, toDisplayString as B, createCommentVNode as D, createBlock as pe, resolveDynamicComponent as ve, nextTick as P } from "vue";
+import { continueListRules as me, splitLines as ye, getSelectedLines as Le, joinLines as L, indent as we, getCursorInLine as ge, continueList as ke, deleteLine as z, duplicateLine as Se, mergeList as be, replaceRange as Re, getRangeFromSelectedLines as T, flip as xe } from "./text.js";
 const Ce = ["readonly", "spellcheck", "value"], $e = ["data-active", "onClick"], he = /* @__PURE__ */ se({
   __name: "Textarea2",
   props: {
     allowFlipLines: { type: Boolean, default: !0 },
     autocomplete: { default: null },
-    contextProvider: { type: Function, default: (S) => ({}) },
+    contextProvider: { type: Function, default: (b) => ({}) },
     continueLists: { type: [Boolean, Array], default: () => Object.values(me) },
     cutFullLine: { type: Boolean, default: !0 },
     deleteLine: { type: Boolean, default: !0 },
@@ -19,15 +19,15 @@ const Ce = ["readonly", "spellcheck", "value"], $e = ["data-active", "onClick"],
     tabSize: { default: 4 }
   },
   emits: ["update:modelValue"],
-  setup(S, { expose: E, emit: C }) {
+  setup(b, { expose: E, emit: C }) {
     re((e) => ({
-      f2e3bcd8: G.value,
-      "86829dba": e.tabSize,
-      fc16d5b2: N.value,
-      "1fadd074": o.menuY,
-      "1fadd076": o.menuX
+      "29dacdb6": G.value,
+      "5c044841": e.tabSize,
+      f6727e6e: N.value,
+      "37ecb0e4": o.menuY,
+      "37ecb0e3": o.menuX
     }));
-    const s = S, O = C, d = $(null);
+    const s = b, O = C, d = $(null);
     function p(e) {
       const t = Array.isArray(e) ? L(e) : e;
       O("update:modelValue", t);
@@ -67,7 +67,7 @@ const Ce = ["readonly", "spellcheck", "value"], $e = ["data-active", "onClick"],
       e.preventDefault();
       const t = [...c.value], n = s.continueLists ? s.continueLists : [];
       f(({ selectionStart: i, selectedLines: l, adjustSelection: a }) => {
-        const [r] = l, m = ge(s.modelValue, i), u = be(t[r], n, m);
+        const [r] = l, m = ge(s.modelValue, i), u = ke(t[r], n, m);
         t.splice(r, 1, u.current), u.next !== null && t.splice(r + 1, 0, u.next), p(L(t)), "didContinue" in u && u.didContinue ? a({ to: "relative", delta: u.match.length + 1 }) : "didEnd" in u && u.didEnd ? a({ to: "startOfLine", startOf: r }) : a({ to: "relative", delta: 1 });
       });
     }
@@ -96,7 +96,7 @@ const Ce = ["readonly", "spellcheck", "value"], $e = ["data-active", "onClick"],
         const [n, i] = t.selectedLines;
         if (n !== i || t.selectionStart !== t.selectionEnd) return;
         e.preventDefault();
-        const l = ke(c.value, n);
+        const l = Se(c.value, n);
         p(L(l)), t.adjustSelection({ to: "endOfLine", endOf: n + 1 });
       });
     }
@@ -118,7 +118,7 @@ const Ce = ["readonly", "spellcheck", "value"], $e = ["data-active", "onClick"],
         if (!t || !s.continueLists) return;
         const [r, m] = l;
         if (r !== m) return;
-        const u = Se(n[r], t, s.continueLists);
+        const u = be(n[r], t, s.continueLists);
         u !== null && (e.preventDefault(), n[r] = u.current, p(L(n)), a({
           to: "relative",
           delta: u.current.length - u.match.length,
@@ -260,20 +260,20 @@ const Ce = ["readonly", "spellcheck", "value"], $e = ["data-active", "onClick"],
       class: g({ [e.$style.wrapper]: !0, [e.$style.wrapperReadonly]: e.readonly }),
       onClick: t[11] || (t[11] = (n) => I())
     }, [
-      b("textarea", {
+      k("textarea", {
         class: g(e.$style.textarea),
         readonly: e.readonly,
         spellcheck: e.spellcheck,
         value: s.modelValue,
         onInput: U,
         onKeydown: [
-          t[0] || (t[0] = v(k((n) => e.allowFlipLines ? A("down") : void 0, ["alt", "prevent"]), ["down"])),
-          t[1] || (t[1] = v(k((n) => e.allowFlipLines ? A("up") : void 0, ["alt", "prevent"]), ["up"])),
+          t[0] || (t[0] = v(S((n) => e.allowFlipLines ? A("down") : void 0, ["alt", "prevent"]), ["down"])),
+          t[1] || (t[1] = v(S((n) => e.allowFlipLines ? A("up") : void 0, ["alt", "prevent"]), ["up"])),
           t[2] || (t[2] = v((n) => o.active ? M(n) : Q(n), ["enter"])),
-          t[3] || (t[3] = v(k((n) => e.duplicateLine ? _(n) : void 0, ["meta", "shift"]), ["d"])),
-          t[4] || (t[4] = v(k((n) => e.deleteLine ? ee(n) : void 0, ["meta", "shift"]), ["k"])),
-          t[5] || (t[5] = v(k((n) => e.cutFullLine ? Z(n) : void 0, ["meta"]), ["x"])),
-          t[6] || (t[6] = v(k((n) => e.insertTabs ? J(n) : void 0, ["prevent"]), ["tab"])),
+          t[3] || (t[3] = v(S((n) => e.duplicateLine ? _(n) : void 0, ["meta", "shift"]), ["d"])),
+          t[4] || (t[4] = v(S((n) => e.deleteLine ? ee(n) : void 0, ["meta", "shift"]), ["k"])),
+          t[5] || (t[5] = v(S((n) => e.cutFullLine ? Z(n) : void 0, ["meta"]), ["x"])),
+          t[6] || (t[6] = v(S((n) => e.insertTabs ? J(n) : void 0, ["prevent"]), ["tab"])),
           t[7] || (t[7] = v((n) => o.active ? oe(n) : void 0, ["up"])),
           t[8] || (t[8] = v((n) => o.active ? le(n) : void 0, ["down"]))
         ],
@@ -282,7 +282,7 @@ const Ce = ["readonly", "spellcheck", "value"], $e = ["data-active", "onClick"],
         ref_key: "textareaEl",
         ref: d
       }, null, 42, Ce),
-      b("div", {
+      k("div", {
         class: g(e.$style.output),
         "data-testid": "output"
       }, [
@@ -303,12 +303,12 @@ const Ce = ["readonly", "spellcheck", "value"], $e = ["data-active", "onClick"],
         key: 0,
         class: g(e.$style.menuPositionHelper)
       }, [
-        b("span", null, B(R.value.before), 1),
-        b("span", {
+        k("span", null, B(R.value.before), 1),
+        k("span", {
           ref_key: "menuPositionHelperEl",
           ref: H
         }, null, 512),
-        b("span", null, B(R.value.after), 1)
+        k("span", null, B(R.value.after), 1)
       ], 2)) : D("", !0),
       e.autocomplete && o.active && x.value.length ? (y(), w("menu", {
         key: 1,
@@ -318,7 +318,7 @@ const Ce = ["readonly", "spellcheck", "value"], $e = ["data-active", "onClick"],
         (y(!0), w(K, null, X(x.value, (n, i) => (y(), w("li", {
           key: n.id
         }, [
-          b("button", {
+          k("button", {
             "data-active": o.focused === i ? !0 : void 0,
             onClick: (l) => j(n)
           }, [
@@ -329,7 +329,7 @@ const Ce = ["readonly", "spellcheck", "value"], $e = ["data-active", "onClick"],
       ], 2)) : D("", !0)
     ], 2));
   }
-}), Be = "_wrapper_fvblc_6", Ee = "_wrapperReadonly_fvblc_17", Oe = "_textarea_fvblc_25", Ne = "_output_fvblc_31", Ve = "_row_fvblc_65", De = "_autocomplete_fvblc_73", Pe = "_menuPositionHelper_fvblc_79", Te = {
+}), Be = "_wrapper_1tt2l_6", Ee = "_wrapperReadonly_1tt2l_13", Oe = "_textarea_1tt2l_21", Ne = "_output_1tt2l_27", Ve = "_row_1tt2l_61", De = "_autocomplete_1tt2l_69", Pe = "_menuPositionHelper_1tt2l_75", Te = {
   wrapper: Be,
   wrapperReadonly: Ee,
   textarea: Oe,
@@ -337,8 +337,8 @@ const Ce = ["readonly", "spellcheck", "value"], $e = ["data-active", "onClick"],
   row: Ve,
   autocomplete: De,
   menuPositionHelper: Pe
-}, Fe = (S, E) => {
-  const C = S.__vccOpts || S;
+}, Fe = (b, E) => {
+  const C = b.__vccOpts || b;
   for (const [s, O] of E)
     C[s] = O;
   return C;
