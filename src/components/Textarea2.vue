@@ -708,10 +708,6 @@ export type AutoCompleteCommand = {
  * Wrapper                                            *
  * -------------------------------------------------- */
 
-:where(.wrapper) {
-  caret-color: blue; /* Need to set a default, otherwise it will be invisible. */
-}
-
 .wrapper {
   cursor: text;
   padding-bottom: v-bind(overscroll);

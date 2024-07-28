@@ -80,38 +80,6 @@ const autocomplete: AutoComplete[] = [
       </p>
     </template>
 
-    <Textarea2 v-model="text" :autocomplete :class="$style.acDemo" />
+    <Textarea2 v-model="text" :autocomplete />
   </Demo>
 </template>
-
-<style module>
-.acDemo {
-  menu {
-    margin: 0;
-    padding: 0.5rem;
-    background-color: white;
-    border: 1px solid black;
-
-    li {
-      list-style-type: none;
-
-      & + & {
-        margin-top: 0.25rem;
-      }
-    }
-
-    button {
-      font: inherit;
-      background-color: white;
-      border: 1px solid black;
-      padding: 0.25rem 0.5rem;
-      display: block;
-      width: 100%;
-
-      &[data-active="true"] {
-        background-color: lightskyblue;
-      }
-    }
-  }
-}
-</style>

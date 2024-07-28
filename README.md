@@ -48,14 +48,14 @@ The textarea exposes a `withContext` method which you can use for interacting wi
 <script setup lang="ts">
 import VueTextarea2 from "@andreasphil/vue-textarea2";
 
-const text = ref("Hello world!")
+const text = ref("Hello world!");
 
 const textareaEl = ref(null);
 
 function doSomething() {
   textareaEl.value?.withContext((context) => {
     // ...
-  })
+  });
 }
 </script>
 
@@ -65,6 +65,16 @@ function doSomething() {
 ```
 
 To learn more about the available props, check out the docs in [Textarea2.vue](./src/components/Textarea2.vue). For examples, see [the demos](./src/demo).
+
+### Styling
+
+The component only implements the absolute minimum of styling that is needed for layout and positioning. Anything else is intentionally left out to make it easy to customize for different applications and styles. There are two options:
+
+- The component is designed to work and look nice out of the box when used on pages using [@andreasphil/design-system](https://github.com/andreasphil/design-system).
+
+- Alternatively, you can provide your own styles with a few lines of CSS. See [textarea2.css](./src/assets/textarea2.css) for an example and further information.
+
+### Text utilities
 
 In addition, this package exposes a bunch of utilities for [manipulating text](./src/lib/text.ts). Those are used internally by the textarea, but can also be useful when extending its functionality:
 
