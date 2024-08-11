@@ -8,13 +8,15 @@
 
 > ⚠️ Work in progress. Things are most certainly incomplete and/or broken, and will definitely change.
 
-- 😌 Helpful, unobtrusive UX improvements like tabs and continuing lists
+- 🤩 Helpful, unobtrusive UX improvements like tabs and continuing lists
 - 🛠️ Highly customizable to support syntax highlighting, custom lists, and more
 - ✅ Support for autocompletions for slash commands, mentions, etc.
 - 👌 Fully typed and tested
 - 🛝 Check out Tasks for a [demo](https://tasks.a13i.dev) and [example usage](https://github.com/andreasphil/tasks)
 
 ## Installation
+
+With a package manager:
 
 ```sh
 npm i github:andreasphil/vue-textarea2#<tag>
@@ -41,6 +43,8 @@ const text = ref("Hello world!");
   <VueTextarea2 v-model="text" />
 </template>
 ```
+
+### Textarea context
 
 The textarea exposes a `withContext` method which you can use for interacting with it. It gives you access to the current `EditingContext`, which includes, for example, methods for focusing and adjusting the selection, current selection, etc.:
 
@@ -76,7 +80,7 @@ The component only implements the absolute minimum of styling that is needed for
 
 ### Text utilities
 
-In addition, this package exposes a bunch of utilities for [manipulating text](./src/lib/text.ts). Those are used internally by the textarea, but can also be useful when extending its functionality:
+In addition, this library exposes a bunch of utilities for [manipulating text](./src/lib/text.ts). Those are used internally by the textarea, but can also be useful when extending its functionality:
 
 ```ts
 import { /*...*/ } "@andreasphil/vue-textarea2/text";
@@ -84,12 +88,13 @@ import { /*...*/ } "@andreasphil/vue-textarea2/text";
 
 ## Development
 
-The library is compatible with [Vue 3](https://vuejs.org) and built with [Vite](https://vitejs.dev). Packages are managed by [pnpm](https://pnpm.io). Tests are powered by [Vitest](https://vitest.dev). The following commands are available for developing and running the demo:
+Textarea2 is compatible with [Vue 3](https://vuejs.org) and built with [Vite](https://vitejs.dev). Packages are managed by [pnpm](https://pnpm.io). Tests are powered by [Vitest](https://vitest.dev). The following commands are available:
 
-```
-pnpm run dev       # Start development server
-pnpm run build     # Create a production bundle
-pnpm run test      # Run tests
+```sh
+pnpm dev          # Start development server
+pnpm test         # Run tests once
+pnpm test:watch   # Run tests in watch mode
+pnpm build        # Bundle for production
 ```
 
 ## Credits
