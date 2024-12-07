@@ -447,6 +447,10 @@ const acCommands = computed(() => {
   });
 });
 
+watchEffect(() => {
+  if (acContext.focused >= acCommands.value.length) acContext.focused = 0;
+});
+
 function acFocusUp(event: KeyboardEvent) {
   if (!acContext.active) return;
   acContext.focused = Math.max(acContext.focused - 1, 0);
