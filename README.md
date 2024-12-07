@@ -10,7 +10,7 @@
 - 🛠️ Highly customizable to support syntax highlighting, custom lists, and more
 - ✅ Support for autocompletions for slash commands, mentions, etc.
 - 👌 Fully typed and tested
-- 🛝 Check out Tasks for a [demo](https://tasks.a13i.dev) and [example usage](https://github.com/andreasphil/tasks)
+- 🐛 Tiny (<6kb min+gzip) footprint
 
 ## Installation
 
