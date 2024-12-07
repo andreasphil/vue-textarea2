@@ -62,12 +62,12 @@ export type AutoCompleteCommand = {
      */
     initial?: boolean;
 };
-declare const _default: <RowContext extends Record<string, any>>(__VLS_props: NonNullable<Awaited<typeof __VLS_setup>>["props"], __VLS_ctx?: __VLS_Prettify<Pick<NonNullable<Awaited<typeof __VLS_setup>>, "attrs" | "emit" | "slots">>, __VLS_expose?: NonNullable<Awaited<typeof __VLS_setup>>["expose"], __VLS_setup?: Promise<{
-    props: __VLS_Prettify<Pick<Partial<{}> & Omit<{
+declare const _default: <RowContext extends Record<string, any>>(__VLS_props: NonNullable<Awaited<typeof __VLS_setup>>["props"], __VLS_ctx?: __VLS_PrettifyLocal<Pick<NonNullable<Awaited<typeof __VLS_setup>>, "attrs" | "emit" | "slots">>, __VLS_expose?: NonNullable<Awaited<typeof __VLS_setup>>["expose"], __VLS_setup?: Promise<{
+    props: __VLS_PrettifyLocal<Pick<Partial<{}> & Omit<{
         "onUpdate:modelValue"?: ((value: string) => any) | undefined;
     } & import("vue").VNodeProps & import("vue").AllowedComponentProps & import("vue").ComponentCustomProps & Readonly<import("vue").ExtractPropTypes<{}>> & {
         "onUpdate:modelValue"?: ((value: string) => any) | undefined;
-    }, never>, "onUpdate:modelValue"> & {
+    }, never>, "onUpdate:modelValue"> & Partial<{}> & {
         /**
          * When true, the order of two lines can be flipped by pressing option +
          * arrow up/down.
@@ -142,7 +142,7 @@ declare const _default: <RowContext extends Record<string, any>>(__VLS_props: No
         }) => Promise<void>;
     }>): void;
     attrs: any;
-    slots: ReturnType<() => Readonly<{
+    slots: Readonly<{
         /**
          * Slot for customizing how individual rows are rendered by the textarea.
          * By default, it renders them as simple plain text, indistinguishable from
@@ -166,15 +166,14 @@ declare const _default: <RowContext extends Record<string, any>>(__VLS_props: No
             context: RowContext;
             index: number;
         }): any;
-    }>;
-    emit: ((e: "update:modelValue", value: string) => void) & {};
+    };
+    emit: (e: "update:modelValue", value: string) => void;
 }>) => import("vue").VNode<import("vue").RendererNode, import("vue").RendererElement, {
     [key: string]: any;
 }> & {
     __ctx?: Awaited<typeof __VLS_setup>;
 };
 export default _default;
-
-type __VLS_Prettify<T> = {
+type __VLS_PrettifyLocal<T> = {
     [K in keyof T]: T[K];
 } & {};
