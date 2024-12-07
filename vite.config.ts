@@ -14,6 +14,7 @@ export default defineConfig({
         fileURLToPath(new URL("./src/lib/text.ts", import.meta.url)),
       ],
       formats: ["es"],
+      cssFileName: "style",
     },
     rollupOptions: {
       external: ["vue"],
