@@ -6,8 +6,6 @@
   <strong>A better plain-text input component for Vue</strong>
 </p>
 
-> ⚠️ Work in progress. Things are most certainly incomplete and/or broken, and will definitely change.
-
 - 🤩 Helpful, unobtrusive UX improvements like tabs and continuing lists
 - 🛠️ Highly customizable to support syntax highlighting, custom lists, and more
 - ✅ Support for autocompletions for slash commands, mentions, etc.
