@@ -1,10 +1,14 @@
 <h1 align="center">
-  Textarea2 🪼
+  Textarea2 🦋
 </h1>
 
 <p align="center">
   <strong>A better plain-text input component for Vue</strong>
 </p>
+
+> [!IMPORTANT]
+>
+> This has been re-implemented as a [native web component](https://github.com/andreasphil/textarea2) and is no longer maintained.
 
 - 🤩 Helpful, unobtrusive UX improvements like tabs and continuing lists
 - 🛠️ Highly customizable to support syntax highlighting, custom lists, and more
